@@ -1,11 +1,5 @@
-Great 👍
-I’ll continue with the **most common next step** for systems like yours:
-
-> **Hybrid approach: auto-generate simple forms from config, but fall back to custom FormA/FormB when needed**
-
-This fits perfectly with your **metadata-driven grid** and avoids creating 20+ forms manually.
-
----
+# Demo 👍
+https://metadata-driven-dynamic-forms.vercel.app/
 
 # 🎯 Goal
 
