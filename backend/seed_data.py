@@ -110,7 +110,7 @@ def seed(reset: bool = False):
                         "tooltip": action.get("tooltip"),
                         "type": action["type"],
                         "icon": action.get("icon"),
-                        "icon_color": action.get("icon_color"),
+                        "icon_color": action.get("iconColor"),
                         "form": json.dumps(action.get("form")) if action.get("form") else None,
                         "api": action.get("api"),
                         "method": action.get("method"),

@@ -6,7 +6,7 @@ ENTITIES = [
     {
         "id": "A",
         "title": "Schema Form A",
-        "api": "/api/entity/a",
+        "api": "/api/data/a",
         "form_type": "schema",
         "columns": [
             {"header": "Name", "field": "name"},
@@ -44,7 +44,7 @@ ENTITIES = [
                 "tooltip": "View detailed information",
                 "type": "form",
                 "icon": "info",
-                "icon_color": "primary",
+                "iconColor": "primary",
                 "form": {
                     "type": "schema",
                     "fields": [
@@ -58,9 +58,9 @@ ENTITIES = [
                 "label": "Deactivate",
                 "tooltip": "Deactivate this record",
                 "icon": "block",
-                "icon_color": "error",
+                "iconColor": "error",
                 "type": "api",
-                "api": "/api/entity/a/deactivate",
+                "api": "/api/data/a/deactivate",
                 "dialogOptions": {"title": "Deactivate Item", "content": "Are you sure you want to deactivate this item?"},
                 "method": "POST",
                 "confirm": True,
@@ -70,7 +70,7 @@ ENTITIES = [
                 "label": "Export",
                 "tooltip": "Export this record's data",
                 "icon": "download",
-                "icon_color": "primary",
+                "iconColor": "primary",
                 "type": "custom",
                 "handler": "exportRow",
             },
@@ -80,7 +80,7 @@ ENTITIES = [
                 "tooltip": "View the audit log for this record",
                 "type": "custom",
                 "icon": "article",
-                "icon_color": "secondary",
+                "iconColor": "secondary",
                 "handler": "openAuditLog",
             },
         ],
@@ -90,7 +90,7 @@ ENTITIES = [
     {
         "id": "schemaForm2",
         "title": "Schema Form 2",
-        "api": "/api/entity/schemaForm2",
+        "api": "/api/data/schemaForm2",
         "form_type": "schema",
         "columns": [
             {"header": "Title", "field": "title"},
@@ -113,7 +113,7 @@ ENTITIES = [
     {
         "id": "B",
         "title": "Custom Form B",
-        "api": "/api/entity/b",
+        "api": "/api/data/b",
         "form_type": "component",
         "component": "FormB",
         "columns": [
@@ -131,7 +131,7 @@ ENTITIES = [
     {
         "id": "C",
         "title": "Custom Form C",
-        "api": "/api/entity/c",
+        "api": "/api/data/c",
         "form_type": "component",
         "component": "FormC",
         "columns": [
@@ -149,7 +149,7 @@ ENTITIES = [
     {
         "id": "D",
         "title": "Schema Form D with Dynamic Select",
-        "api": "/api/entity/d",
+        "api": "/api/data/d",
         "form_type": "schema",
         "columns": [
             {"header": "Item Name", "field": "itemName"},
@@ -170,7 +170,7 @@ ENTITIES = [
     {
         "id": "E",
         "title": "Schema Form E with Dependent Fields",
-        "api": "/api/entity/e",
+        "api": "/api/data/e",
         "form_type": "schema",
         "columns": [
             {"header": "Country", "field": "country"},
