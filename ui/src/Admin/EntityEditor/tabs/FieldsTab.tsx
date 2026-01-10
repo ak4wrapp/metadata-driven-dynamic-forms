@@ -15,6 +15,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { JsonEditor } from "../../../components/JsonEditor";
 
 const fieldTypes = [
   "text",
@@ -98,15 +99,12 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               />
 
               {f.type === "select" && (
-                <TextField
+                <JsonEditor
                   label="Options (JSON)"
-                  value={JSON.stringify(f.options || [])}
-                  onChange={(e) => {
-                    try {
-                      update(i, { options: JSON.parse(e.target.value) });
-                    } catch {}
-                  }}
-                  size="small"
+                  value={f.options}
+                  onChange={(val) => update(i, { options: val })}
+                  height={120}
+                  helperText="Static select options as [{ label, value }]"
                 />
               )}
 

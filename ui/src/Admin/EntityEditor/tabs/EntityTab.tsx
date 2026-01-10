@@ -16,7 +16,7 @@ type EntityTabProps = {
 
 export function EntityTab({ data, updateRoot, isEdit }: EntityTabProps) {
   return (
-    <Stack spacing={2}>
+    <Stack spacing={1}>
       <TextField
         label="ID"
         value={data.id}
@@ -54,7 +54,7 @@ export function EntityTab({ data, updateRoot, isEdit }: EntityTabProps) {
       {data.form_type === "component" && (
         <TextField
           label="Component"
-          value={data.component ?? ""}
+          value={data.component}
           onChange={(e) => updateRoot("component", e.target.value)}
           helperText="Name of the custom component to render"
         />

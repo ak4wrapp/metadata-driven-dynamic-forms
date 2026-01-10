@@ -66,7 +66,6 @@ class EntityService:
                     SELECT *
                     FROM entity_actions
                     WHERE LOWER(entity_id) = LOWER(:id)
-                    ORDER BY id
                 """),
                 {"id": entity_id},
             ).mappings().all()

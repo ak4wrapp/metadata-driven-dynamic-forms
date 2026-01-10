@@ -15,12 +15,19 @@ type EntityEditorProps = {
 
 function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
   const [tab, setTab] = React.useState(0);
-  const [data, setData] = React.useState<any>({
-    ...structuredClone(entity),
-    columns: entity.columns || [],
-    fields: entity.fields || [],
-    actions: entity.actions || [],
+
+  const normalizeEntity = (entity: any) => ({
+    id: entity.id ?? "",
+    title: entity.title ?? "",
+    api: entity.api ?? "",
+    form_type: entity.formType ?? "schema", // ✅ default
+    component: entity.component ?? "",
+    columns: Array.isArray(entity.columns) ? entity.columns : [],
+    fields: Array.isArray(entity.fields) ? entity.fields : [],
+    actions: Array.isArray(entity.actions) ? entity.actions : [],
   });
+
+  const [data, setData] = React.useState<any>(() => normalizeEntity(entity));
 
   const updateRoot = (key: string, value: any) => {
     setData((prev: any) => ({ ...prev, [key]: value }));

@@ -15,6 +15,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { JsonEditor } from "../../../components/JsonEditor";
 
 const colorOptions = [
   "inherit",
@@ -143,6 +144,20 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
                     }
                     label="Require Confirmation"
                   />
+                  {a.confirm && (
+                    <JsonEditor
+                      label="Dialog Options (Json)"
+                      value={a.dialogOptions || {}}
+                      onChange={(newValue) =>
+                        update(i, { dialogOptions: newValue })
+                      }
+                      helperText={`Dialog Content your want to display in the confirmation dialog. 
+                        e.g. {
+                          "content": "Are you sure you want to deactivate this item?",
+                          "title": "Deactivate Item"
+                        }"`}
+                    />
+                  )}
                 </>
               )}
 

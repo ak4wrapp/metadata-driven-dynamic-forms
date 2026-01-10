@@ -11,6 +11,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { JsonEditor } from "../../../components/JsonEditor";
 
 type ColumnsTabProps = {
   columns: any[];
@@ -47,17 +48,11 @@ export function ColumnsTab({ columns, update, add, remove }: ColumnsTabProps) {
                 onChange={(e) => update(i, { renderer: e.target.value })}
                 size="small"
               />
-              <TextField
-                label="Renderer Params (JSON)"
-                value={JSON.stringify(c.rendererParams || {})}
-                onChange={(e) => {
-                  try {
-                    update(i, {
-                      rendererParams: JSON.parse(e.target.value),
-                    });
-                  } catch {}
-                }}
-                size="small"
+              <JsonEditor
+                label="Renderer Params"
+                value={c.rendererParams}
+                onChange={(val) => update(i, { rendererParams: val })}
+                height={100}
               />
               <FormControlLabel
                 control={

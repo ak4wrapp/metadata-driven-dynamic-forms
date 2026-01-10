@@ -48,6 +48,7 @@ export function AdminEntities() {
         <Button
           size="small"
           onClick={() => {
+            console.info("Selected entity:", p.data);
             setEntity(p.data);
             setMode("edit");
             setOpen(true);
