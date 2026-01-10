@@ -1,3 +1,4 @@
+// ui/src/row-data.ts
 export const rowData = [
   {
     id: "A",

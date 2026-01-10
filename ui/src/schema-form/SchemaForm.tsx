@@ -1,3 +1,5 @@
+// ui/src/schema-form/SchemaForm.tsx
+
 import * as React from "react";
 import { Stack, Button } from "@mui/material";
 import { Errors, FieldConfig } from "./../types";

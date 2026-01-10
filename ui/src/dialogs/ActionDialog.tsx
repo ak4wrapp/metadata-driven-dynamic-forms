@@ -1,3 +1,4 @@
+// ui/src/dialogs/ActionDialog.tsx
 import * as React from "react";
 import { Box, CircularProgress, Dialog, DialogContent } from "@mui/material";
 

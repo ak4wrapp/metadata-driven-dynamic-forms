@@ -1,3 +1,4 @@
+// ui/src/custom-forms/FormRenderer.tsx
 import React from "react";
 import { FormAData } from "./FormA";
 import { FormBData } from "./FormB";
@@ -46,9 +47,9 @@ export function FormRenderer<K extends keyof FormDataMap>({
   const componentKey = FormKeyToComponentMap[entityKey];
 
   // Step 2: get component
-  const FormComponent = customFormsRegistry[componentKey] as React.ComponentType<
-    BaseFormProps<FormDataMap[K]>
-  >;
+  const FormComponent = customFormsRegistry[
+    componentKey
+  ] as React.ComponentType<BaseFormProps<FormDataMap[K]>>;
 
   return (
     <Suspense fallback={<CircularProgress />}>

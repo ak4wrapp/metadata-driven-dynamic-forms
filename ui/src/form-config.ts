@@ -1,3 +1,5 @@
+// ui/src/form-config.ts
+
 import { FieldConfig } from "./types";
 
 type ActionFormConfig =

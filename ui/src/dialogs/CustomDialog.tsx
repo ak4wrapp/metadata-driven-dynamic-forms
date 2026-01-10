@@ -1,3 +1,5 @@
+// ui/src/dialogs/CustomDialog.tsx
+
 import * as React from "react";
 import {
   Dialog,
