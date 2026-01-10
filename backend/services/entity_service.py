@@ -21,6 +21,7 @@ class EntityService:
     @staticmethod
     def list_full():
         with engine.connect() as conn:
+            # Get entities
             entities = conn.execute(
                 text("""
                     SELECT id, title, api, form_type, component
@@ -31,7 +32,7 @@ class EntityService:
 
             full_entities = []
             for e in entities:
-                e = dict(e)
+                e = dict(e)  # make mutable
 
                 # Columns
                 cols = conn.execute(
@@ -67,12 +68,37 @@ class EntityService:
                     except (TypeError, json.JSONDecodeError):
                         f["config"] = {}
 
+                # Actions
+                acts = conn.execute(
+                    text("""
+                        SELECT id, label, tooltip, type, icon, icon_color, form, api, method, confirm, handler, dialog_options
+                        FROM entity_actions
+                        WHERE LOWER(entity_id) = LOWER(:eid)
+                        ORDER BY id ASC
+                    """),
+                    {"eid": e["id"]},
+                ).mappings().all()
+                acts = [dict(a) for a in acts]
+                for a in acts:
+                    if a.get("form"):
+                        try:
+                            a["form"] = json.loads(a["form"])
+                        except (TypeError, json.JSONDecodeError):
+                            a["form"] = {}
+                    if a.get("dialog_options"):
+                        try:
+                            a["dialog_options"] = json.loads(a["dialog_options"])
+                        except (TypeError, json.JSONDecodeError):
+                            a["dialog_options"] = {}
+
                 e["columns"] = cols
                 e["fields"] = flds
+                e["actions"] = acts
 
                 full_entities.append(e)
 
         return full_entities
+
 
     @staticmethod
     def get(entity_id: str):

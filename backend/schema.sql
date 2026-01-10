@@ -50,6 +50,28 @@ CREATE TABLE IF NOT EXISTS entity_fields (
 );
 
 -- =========================
+-- ACTIONS (per entity)
+-- =========================
+CREATE TABLE IF NOT EXISTS entity_actions (
+  id TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  label TEXT NOT NULL,
+  tooltip TEXT,
+  type TEXT NOT NULL CHECK (type IN ('form','api','custom')),
+  icon TEXT,
+  icon_color TEXT,
+  form TEXT,            -- JSON for form type
+  api TEXT,
+  method TEXT,
+  confirm BOOLEAN,
+  handler TEXT,
+  dialog_options TEXT,  -- JSON
+  PRIMARY KEY (id, entity_id),
+  FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE
+);
+
+
+-- =========================
 -- ROW DATA (User Data)
 -- =========================
 CREATE TABLE IF NOT EXISTS entity_rows (
