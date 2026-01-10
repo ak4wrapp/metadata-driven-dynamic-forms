@@ -10,7 +10,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
-import { EntityEditor } from "./EntityEditor";
+import { EntityEditor } from "./EntityEditor/EntityEditor";
 import { useAPI } from "../hooks/useAPI";
 
 export function AdminEntities() {
