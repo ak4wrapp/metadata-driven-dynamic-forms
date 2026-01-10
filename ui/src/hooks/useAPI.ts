@@ -5,7 +5,7 @@ import * as React from "react";
 const BASE_URL =
   window.location.hostname === "localhost"
     ? "http://127.0.0.1:3000"
-    : "http://react-concepts-made-easy.onrender.com";
+    : "https://metadata-driven-dynamic-forms.onrender.com";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
