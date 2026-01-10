@@ -5,12 +5,15 @@ import { ColumnsTab } from "./tabs/ColumnsTab";
 import { FieldsTab } from "./tabs/FieldsTab";
 import { ActionsTab } from "./tabs/ActionsTab";
 
+import { ThemeProvider } from "@mui/material/styles";
+import { entityEditorTheme } from "./entityEditorTheme";
+
 type EntityEditorProps = {
   entity: any;
   onSave: (entity: any) => void;
 };
 
-export function EntityEditor({ entity, onSave }: EntityEditorProps) {
+function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
   const [tab, setTab] = React.useState(0);
   const [data, setData] = React.useState<any>({
     ...structuredClone(entity),
@@ -102,5 +105,13 @@ export function EntityEditor({ entity, onSave }: EntityEditorProps) {
         </Button>
       </Box>
     </Box>
+  );
+}
+
+export function EntityEditor(props: EntityEditorProps) {
+  return (
+    <ThemeProvider theme={entityEditorTheme}>
+      <EntityEditorComponent {...props} />
+    </ThemeProvider>
   );
 }
