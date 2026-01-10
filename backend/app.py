@@ -2,8 +2,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restx import Api
 
-from controllers.admin_entities import bp as admin_entities_bp
-from controllers.user_records import bp as user_records_bp
+from controllers.admin import bp as admin_bp
+from controllers.entity import bp as entity_bp
+from controllers.data import bp as data_bp
 from controllers.health import bp as health_check_bp
 
 def create_app():
@@ -13,8 +14,9 @@ def create_app():
     api = Api(app, doc="/docs")  # Swagger UI at /docs
 
     # Add namespaces
-    api.add_namespace(admin_entities_bp, path="/admin/entities")
-    api.add_namespace(user_records_bp, path="/api")
+    api.add_namespace(admin_bp, path="/admin")
+    api.add_namespace(entity_bp, path="/api/entity")
+    api.add_namespace(data_bp, path="/api/data")
     api.add_namespace(health_check_bp, path="/health")
 
     return app

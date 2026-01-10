@@ -30,11 +30,52 @@ export function DynamicLanding() {
   const [loadingRows, setLoadingRows] = React.useState(false);
 
   // Fetch all entities metadata
+  // const {
+  //   data: entities,
+  //   loading: loadingEntities,
+  //   callAPI: fetchEntities,
+  // } = useAPI<Entity[]>("/admin/entities/full");
+
+  /**
+   * 1. Load all entities on mount
+   * GET http://127.0.0.1:3000/api/entity/
+   */
   const {
     data: entities,
     loading: loadingEntities,
     callAPI: fetchEntities,
-  } = useAPI<Entity[]>("/admin/entities/full");
+  } = useAPI<Entity[]>("/api/entity/");
+
+  /**
+   * 2. Load full entity config when activeEntity changes
+   * GET http://127.0.0.1:3000/api/entity/{id}
+   */
+  const { loading: loadingActiveEntity, callAPI: fetchEntityById } =
+    useAPI<Entity>("", { autoFetch: false });
+
+  React.useEffect(() => {
+    fetchEntities();
+  }, []);
+
+  // Set default entity
+  React.useEffect(() => {
+    if (entities?.length && !activeEntity) {
+      setActiveEntity(entities[0]);
+    }
+  }, [entities, activeEntity]);
+
+  // Load full entity config when activeEntity.id changes
+  React.useEffect(() => {
+    if (!activeEntity?.id) return;
+
+    fetchEntityById(`http://127.0.0.1:3000/api/entity/${activeEntity.id}`).then(
+      (fullEntity) => {
+        if (fullEntity) {
+          setActiveEntity(fullEntity);
+        }
+      }
+    );
+  }, [activeEntity?.id]);
 
   // API caller for entity rows and CRUD
   const { callAPI: callEntityAPI } = useAPI<any[]>("", { autoFetch: false });

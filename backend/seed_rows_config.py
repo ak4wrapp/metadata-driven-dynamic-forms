@@ -6,7 +6,7 @@ ENTITIES = [
     {
         "id": "A",
         "title": "Schema Form A",
-        "api": "/api/a",
+        "api": "/api/entity/a",
         "form_type": "schema",
         "columns": [
             {"header": "Name", "field": "name"},
@@ -60,7 +60,7 @@ ENTITIES = [
                 "icon": "block",
                 "icon_color": "error",
                 "type": "api",
-                "api": "/api/a/deactivate",
+                "api": "/api/entity/a/deactivate",
                 "dialogOptions": {"title": "Deactivate Item", "content": "Are you sure you want to deactivate this item?"},
                 "method": "POST",
                 "confirm": True,
@@ -90,7 +90,7 @@ ENTITIES = [
     {
         "id": "schemaForm2",
         "title": "Schema Form 2",
-        "api": "/api/schemaForm2",
+        "api": "/api/entity/schemaForm2",
         "form_type": "schema",
         "columns": [
             {"header": "Title", "field": "title"},
@@ -113,7 +113,7 @@ ENTITIES = [
     {
         "id": "B",
         "title": "Custom Form B",
-        "api": "/api/b",
+        "api": "/api/entity/b",
         "form_type": "component",
         "component": "FormB",
         "columns": [
@@ -131,7 +131,7 @@ ENTITIES = [
     {
         "id": "C",
         "title": "Custom Form C",
-        "api": "/api/c",
+        "api": "/api/entity/c",
         "form_type": "component",
         "component": "FormC",
         "columns": [
@@ -149,7 +149,7 @@ ENTITIES = [
     {
         "id": "D",
         "title": "Schema Form D with Dynamic Select",
-        "api": "/api/d",
+        "api": "/api/entity/d",
         "form_type": "schema",
         "columns": [
             {"header": "Item Name", "field": "itemName"},
@@ -170,7 +170,7 @@ ENTITIES = [
     {
         "id": "E",
         "title": "Schema Form E with Dependent Fields",
-        "api": "/api/e",
+        "api": "/api/entity/e",
         "form_type": "schema",
         "columns": [
             {"header": "Country", "field": "country"},
