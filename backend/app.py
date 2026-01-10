@@ -1,3 +1,6 @@
+import os
+import shutil
+import subprocess
 from flask import Flask, Response, json
 from flask_cors import CORS
 from flask_restx import Api
@@ -23,6 +26,28 @@ def convert_keys_to_camel_case(obj):
 def create_app():
     app = Flask(__name__)
     CORS(app)
+
+    # Path to your database file
+    DB_FILE = "metadata.db"
+
+    # Determine which python command is available
+    python_cmd = shutil.which("python3") or shutil.which("python")
+    if not python_cmd:
+        raise RuntimeError("No Python interpreter found!")
+
+    # Check if the database exists
+    if not os.path.exists(DB_FILE):
+        print(f"{DB_FILE} not found. Initializing database and seeding data...")
+        # Run init.db.py
+        subprocess.run([python_cmd, "init_db.py"], check=True)
+        # Run seed_data.py
+        subprocess.run([python_cmd, "seed_data.py"], check=True)
+        print("Database created and seeded!")
+
+    # Your existing Flask routes
+    @app.route("/")
+    def home():
+        return "Hello, Flask is running!"
 
     # Swagger API
     api = Api(app, doc="/docs")
