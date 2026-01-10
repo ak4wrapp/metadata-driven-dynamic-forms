@@ -2,6 +2,7 @@ import json
 from sqlalchemy import text
 from db import engine
 
+
 class FieldService:
     @staticmethod
     def list(entity_id: str):
@@ -10,7 +11,7 @@ class FieldService:
                 text("""
                     SELECT id, name, label, type, required, depends_on, config, sort_order
                     FROM entity_fields
-                    WHERE entity_id = :eid
+                    WHERE LOWER(entity_id) = LOWER(:eid)
                     ORDER BY sort_order ASC
                 """),
                 {"eid": entity_id},
@@ -48,7 +49,7 @@ class FieldService:
                         depends_on = :depends_on,
                         config = :config,
                         sort_order = :sort_order
-                    WHERE id = :id AND entity_id = :entity_id
+                    WHERE id = :id AND LOWER(entity_id) = LOWER(:entity_id)
                 """),
                 {"id": field_id, "entity_id": entity_id, **data},
             )
@@ -59,7 +60,7 @@ class FieldService:
             conn.execute(
                 text("""
                     DELETE FROM entity_fields
-                    WHERE id = :id AND entity_id = :entity_id
+                    WHERE id = :id AND LOWER(entity_id) = LOWER(:entity_id)
                 """),
                 {"id": field_id, "entity_id": entity_id},
             )

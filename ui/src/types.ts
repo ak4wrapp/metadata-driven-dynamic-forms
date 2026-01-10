@@ -32,6 +32,9 @@ export interface FieldConfig {
 
   // conditional display based on another field's value
   dependsOn?: string;
+
+  // backend stores all metadata here
+  config?: Partial<Omit<FieldConfig, "config">>;
 }
 
 export type OptionsMap = Record<string, { loading: boolean; options: any[] }>;

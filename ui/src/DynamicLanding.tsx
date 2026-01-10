@@ -27,19 +27,22 @@ export function DynamicLanding() {
     "create"
   );
   const [dialogData, setDialogData] = React.useState<any>(null);
+  const [loadingRows, setLoadingRows] = React.useState(false);
 
+  // Fetch all entities metadata
   const {
     data: entities,
-    loading,
+    loading: loadingEntities,
     callAPI: fetchEntities,
   } = useAPI<Entity[]>("/admin/entities/full");
 
-  React.useEffect(() => {
-    fetchEntities(); // manually fetch once
-  }, []);
-
-  // Fetch entity rows dynamically (optional)
+  // API caller for entity rows and CRUD
   const { callAPI: callEntityAPI } = useAPI<any[]>("", { autoFetch: false });
+
+  // Fetch entities metadata on mount
+  React.useEffect(() => {
+    fetchEntities();
+  }, []);
 
   // Set default active entity when entities load
   React.useEffect(() => {
@@ -48,7 +51,21 @@ export function DynamicLanding() {
     }
   }, [entities, activeEntity]);
 
-  if (loading || !activeEntity) return <CircularProgress />;
+  // Fetch rows whenever activeEntity changes
+  React.useEffect(() => {
+    if (!activeEntity) return;
+
+    setLoadingRows(true);
+
+    callEntityAPI(activeEntity.api)
+      .then((rows) => {
+        setActiveEntity((prev) => prev && { ...prev, rows: rows ?? [] });
+      })
+      .finally(() => setLoadingRows(false));
+  }, [activeEntity?.id]);
+
+  if (loadingEntities || !activeEntity || loadingRows)
+    return <CircularProgress />;
 
   const columnDefs: ColDef[] = buildColumnDefs(
     activeEntity.columns,
@@ -85,8 +102,9 @@ export function DynamicLanding() {
 
       await callEntityAPI(url, { method, body: data });
 
-      // refresh entities list after submit
-      await fetchEntities();
+      // refresh rows after submit
+      const updatedRows = await callEntityAPI(activeEntity.api);
+      setActiveEntity((prev) => prev && { ...prev, rows: updatedRows ?? [] });
 
       setCrudDialogOpen(false);
     } catch (err) {

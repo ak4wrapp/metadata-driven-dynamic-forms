@@ -15,8 +15,8 @@ from db import engine
 # -----------------------------
 # Metadata Definitions
 # -----------------------------
-
 ENTITIES = [
+    # Schema Form A
     {
         "id": "A",
         "title": "Schema Form A",
@@ -39,52 +39,48 @@ ENTITIES = [
         "fields": [
             {"name": "name", "label": "Name", "type": "text", "required": True},
             {"name": "age", "label": "Age", "type": "number"},
-            {"name": "country", "label": "Country", "type": "dynamic-select"},
-            {"name": "state", "label": "State", "type": "dynamic-select", "dependsOn": "country"},
+            {
+                "name": "country",
+                "label": "Country",
+                "type": "dynamic-select",
+                "optionsAPI": "/api/countries",
+                "optionLabel": "name",
+                "optionValue": "code",
+            },
+            {
+                "name": "state",
+                "label": "State",
+                "type": "dynamic-select",
+                "dependsOn": "country",
+                "optionsAPI": "/api/states?country={country}",
+                "optionLabel": "name",
+                "optionValue": "code",
+            },
             {"name": "birthDate", "label": "Birth Date", "type": "date"},
             {"name": "salary", "label": "Salary", "type": "number"},
-            {"name": "currency", "label": "Currency", "type": "select"},
+            {
+                "name": "currency",
+                "label": "Currency",
+                "type": "select",
+                "options": [
+                    {"label": "USD", "value": "USD"},
+                    {"label": "EUR", "value": "EUR"},
+                    {"label": "GBP", "value": "GBP"},
+                    {"label": "INR", "value": "INR"},
+                ],
+                "optionLabel": "label",
+                "optionValue": "value",
+            },
         ],
         "rows": [
-            {
-                "name": "John Doe",
-                "age": 30,
-                "state": "NY",
-                "country": "US",
-                "birthDate": "1993-05-15",
-                "salary": 60000,
-                "currency": "USD",
-            },
-            {
-                "name": "Jane Smith",
-                "age": 25,
-                "state": "NJ",
-                "country": "US",
-                "birthDate": "1998-08-22",
-                "salary": 75000,
-                "currency": "USD",
-            },
-            {
-                "name": "Alice Johnson",
-                "age": 28,
-                "state": "NC",
-                "country": "US",
-                "birthDate": "1995-12-03",
-                "salary": 80000,
-                "currency": "USD",
-            },
-            {
-                "name": "Bob Brown",
-                "age": 41,
-                "state": "KA",
-                "country": "IN",
-                "birthDate": "1982-11-11",
-                "salary": 1200000,
-                "currency": "INR",
-            },
+            {"name": "John Doe", "age": 30, "country": "US", "state": "NY", "birthDate": "1993-05-15", "salary": 60000, "currency": "USD"},
+            {"name": "Jane Smith", "age": 25, "country": "US", "state": "NJ", "birthDate": "1998-08-22", "salary": 75000, "currency": "USD"},
+            {"name": "Alice Johnson", "age": 28, "country": "US", "state": "NC", "birthDate": "1995-12-03", "salary": 80000, "currency": "USD"},
+            {"name": "Bob Brown", "age": 41, "country": "IN", "state": "KA", "birthDate": "1982-11-11", "salary": 1200000, "currency": "INR"},
         ],
     },
 
+    # Schema Form 2
     {
         "id": "schemaForm2",
         "title": "Schema Form 2",
@@ -107,6 +103,7 @@ ENTITIES = [
         ],
     },
 
+    # Custom Form B
     {
         "id": "B",
         "title": "Custom Form B",
@@ -124,6 +121,7 @@ ENTITIES = [
         ],
     },
 
+    # Custom Form C
     {
         "id": "C",
         "title": "Custom Form C",
@@ -141,6 +139,7 @@ ENTITIES = [
         ],
     },
 
+    # Schema Form D
     {
         "id": "D",
         "title": "Schema Form D with Dynamic Select",
@@ -152,7 +151,7 @@ ENTITIES = [
         ],
         "fields": [
             {"name": "itemName", "label": "Item Name", "type": "text", "required": True},
-            {"name": "category", "label": "Category", "type": "dynamic-select"},
+            {"name": "category", "label": "Category", "type": "dynamic-select", "optionsAPI": "/api/categories", "optionLabel": "name", "optionValue": "id"},
         ],
         "rows": [
             {"itemName": "Item 1", "category": "Category A"},
@@ -161,6 +160,7 @@ ENTITIES = [
         ],
     },
 
+    # Schema Form E
     {
         "id": "E",
         "title": "Schema Form E with Dependent Fields",
@@ -171,8 +171,8 @@ ENTITIES = [
             {"header": "State", "field": "state"},
         ],
         "fields": [
-            {"name": "country", "label": "Country", "type": "dynamic-select"},
-            {"name": "state", "label": "State", "type": "dynamic-select", "dependsOn": "country"},
+            {"name": "country", "label": "Country", "type": "dynamic-select", "optionsAPI": "/api/countries", "optionLabel": "name", "optionValue": "code"},
+            {"name": "state", "label": "State", "type": "dynamic-select", "dependsOn": "country", "optionsAPI": "/api/states?country={country}", "optionLabel": "name", "optionValue": "code"},
         ],
         "rows": [
             {"country": "US", "state": "NY"},
@@ -181,7 +181,6 @@ ENTITIES = [
         ],
     },
 ]
-
 
 # -----------------------------
 # Seeder Logic

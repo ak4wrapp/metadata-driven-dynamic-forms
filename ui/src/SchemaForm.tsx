@@ -28,8 +28,14 @@ export default function SchemaForm({
 
   const prevDepsRef = React.useRef<Record<string, any>>({});
 
+  // Flatten field configs with backend metadata
+  const flattenedFields = React.useMemo(
+    () => fields.map((f) => ({ ...f, ...f.config })),
+    [fields]
+  );
+
   React.useEffect(() => {
-    fields.forEach((field) => {
+    flattenedFields.forEach((field) => {
       if (field.type === "dynamic-select" && field.optionsAPI) {
         const dependsOnValue = field.dependsOn ? state[field.dependsOn] : true;
 
@@ -109,7 +115,7 @@ export default function SchemaForm({
       }}
     >
       <Stack spacing={2}>
-        {fields.map((f) => {
+        {flattenedFields.map((f) => {
           switch (f.type) {
             case "text":
             case "number":

@@ -1,4 +1,3 @@
-# services/record_service.py
 import json
 from sqlalchemy import text
 from db import engine
@@ -12,7 +11,7 @@ class RecordService:
                 text("""
                     SELECT id, data, created_at
                     FROM entity_rows
-                    WHERE entity_id = :eid
+                    WHERE LOWER(entity_id) = LOWER(:eid)
                     ORDER BY id DESC
                 """),
                 {"eid": entity_id},
@@ -34,7 +33,7 @@ class RecordService:
                 text("""
                     SELECT id, data, created_at
                     FROM entity_rows
-                    WHERE id = :id AND entity_id = :eid
+                    WHERE id = :id AND LOWER(entity_id) = LOWER(:eid)
                 """),
                 {"id": record_id, "eid": entity_id},
             ).mappings().first()
@@ -61,7 +60,6 @@ class RecordService:
                     "data": json.dumps(data),
                 },
             )
-
             return res.lastrowid
 
     @staticmethod
@@ -71,7 +69,7 @@ class RecordService:
                 text("""
                     UPDATE entity_rows
                     SET data = :data
-                    WHERE id = :id AND entity_id = :eid
+                    WHERE id = :id AND LOWER(entity_id) = LOWER(:eid)
                 """),
                 {
                     "id": record_id,
@@ -86,7 +84,7 @@ class RecordService:
             conn.execute(
                 text("""
                     DELETE FROM entity_rows
-                    WHERE id = :id AND entity_id = :eid
+                    WHERE id = :id AND LOWER(entity_id) = LOWER(:eid)
                 """),
                 {"id": record_id, "eid": entity_id},
             )
