@@ -157,7 +157,7 @@ ENTITIES = [
         ],
         "fields": [
             {"name": "itemName", "label": "Item Name", "type": "text", "required": True},
-            {"name": "category", "label": "Category", "type": "dynamic-select", "optionsAPI": "/api/categories", "optionLabel": "name", "optionValue": "id"},
+            {"name": "category", "label": "Category", "type": "dynamic-select", "optionsAPI": "/api/categories", "optionLabel": "label", "optionValue": "code"},
         ],
         "rows": [
             {"itemName": "Item 1", "category": "Category A"},

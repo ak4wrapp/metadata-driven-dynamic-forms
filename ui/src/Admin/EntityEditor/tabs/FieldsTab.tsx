@@ -34,6 +34,13 @@ type FieldsTabProps = {
 };
 
 export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
+  const updateField = (index: number, patch: any) => {
+    console.log(`Updating index ${index} with patch`, patch);
+
+    // Example: call update if that's what it's for
+    update(index, patch);
+  };
+
   return (
     <Stack spacing={2}>
       {fields.map((f, i) => (
@@ -46,13 +53,13 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               <TextField
                 label="Name"
                 value={f.name || ""}
-                onChange={(e) => update(i, { name: e.target.value })}
+                onChange={(e) => updateField(i, { name: e.target.value })}
                 size="small"
               />
               <TextField
                 label="Label"
                 value={f.label || ""}
-                onChange={(e) => update(i, { label: e.target.value })}
+                onChange={(e) => updateField(i, { label: e.target.value })}
                 size="small"
               />
 
@@ -61,7 +68,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 <Select
                   value={f.type || "text"}
                   label="Type"
-                  onChange={(e) => update(i, { type: e.target.value })}
+                  onChange={(e) => updateField(i, { type: e.target.value })}
                 >
                   {fieldTypes.map((t) => (
                     <MenuItem key={t} value={t}>
@@ -75,7 +82,9 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 control={
                   <Switch
                     checked={!!f.required}
-                    onChange={(e) => update(i, { required: e.target.checked })}
+                    onChange={(e) =>
+                      updateField(i, { required: e.target.checked })
+                    }
                   />
                 }
                 label="Required"
@@ -85,7 +94,9 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 control={
                   <Switch
                     checked={!!f.readOnly}
-                    onChange={(e) => update(i, { readOnly: e.target.checked })}
+                    onChange={(e) =>
+                      updateField(i, { readOnly: e.target.checked })
+                    }
                   />
                 }
                 label="Read Only"
@@ -94,7 +105,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               <TextField
                 label="Depends On"
                 value={f.dependsOn || ""}
-                onChange={(e) => update(i, { dependsOn: e.target.value })}
+                onChange={(e) => updateField(i, { dependsOn: e.target.value })}
                 size="small"
               />
 
@@ -102,7 +113,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 <JsonEditor
                   label="Options (JSON)"
                   value={f.options}
-                  onChange={(val) => update(i, { options: val })}
+                  onChange={(val) => updateField(i, { options: val })}
                   height={120}
                   helperText="Static select options as [{ label, value }]"
                 />
@@ -112,7 +123,9 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 <TextField
                   label="Options API"
                   value={f.optionsAPI || ""}
-                  onChange={(e) => update(i, { optionsAPI: e.target.value })}
+                  onChange={(e) =>
+                    updateField(i, { optionsAPI: e.target.value })
+                  }
                   size="small"
                 />
               )}
@@ -121,14 +134,28 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 <>
                   <TextField
                     label="Option Label"
-                    value={f.optionLabel || "label"}
-                    onChange={(e) => update(i, { optionLabel: e.target.value })}
+                    value={f.config.optionLabel || "label"}
+                    onChange={(e) =>
+                      updateField(i, {
+                        config: {
+                          ...f.config,
+                          optionLabel: e.target.value,
+                        },
+                      })
+                    }
                     size="small"
                   />
                   <TextField
                     label="Option Value"
-                    value={f.optionValue || "value"}
-                    onChange={(e) => update(i, { optionValue: e.target.value })}
+                    value={f.config.optionValue || "value"}
+                    onChange={(e) =>
+                      updateField(i, {
+                        config: {
+                          ...f.config,
+                          optionValue: e.target.value,
+                        },
+                      })
+                    }
                     size="small"
                   />
                 </>

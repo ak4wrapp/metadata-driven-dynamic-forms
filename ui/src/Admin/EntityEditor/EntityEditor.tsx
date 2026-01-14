@@ -40,7 +40,9 @@ function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
   ) => {
     setData((prev: any) => {
       const copy = [...prev[key]];
+      console.log("Old:", copy);
       copy[index] = { ...copy[index], ...patch };
+      console.log("New:", copy);
       return { ...prev, [key]: copy };
     });
   };
