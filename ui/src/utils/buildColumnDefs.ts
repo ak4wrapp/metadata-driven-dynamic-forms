@@ -32,7 +32,7 @@ export function buildColumnDefs(
     };
   });
 
-  if (!actions) return baseCols;
+  if (!actions || actions.length === 0) return baseCols;
 
   return [
     {

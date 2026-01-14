@@ -141,7 +141,7 @@ export function setupMockApi() {
     // Handle any other static mock route
     // -------------------------
     if (mockRoutes[basePath]) {
-      const { delay = 1000, data } = mockRoutes[basePath];
+      const { delay = 100, data } = mockRoutes[basePath];
       await new Promise((res) => setTimeout(res, delay));
 
       return new Response(JSON.stringify(data), {
@@ -152,7 +152,7 @@ export function setupMockApi() {
 
     // fallback to real fetch for any non-mocked routes
     // but add a small delay to simulate network latency
-    await new Promise((res) => setTimeout(res, 2000));
+    await new Promise((res) => setTimeout(res, 100));
     return originalFetch(input, init);
   };
 
