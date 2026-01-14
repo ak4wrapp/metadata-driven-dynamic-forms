@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { JsonEditor } from "../../../components/JsonEditor";
+import DebouncedTextField from "../../../components/DebouncedTextField";
 
 const fieldTypes = [
   "text",
@@ -50,13 +51,13 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
           </AccordionSummary>
           <AccordionDetails>
             <Stack spacing={1}>
-              <TextField
+              <DebouncedTextField
                 label="Name"
                 value={f.name || ""}
                 onChange={(e) => updateField(i, { name: e.target.value })}
                 size="small"
               />
-              <TextField
+              <DebouncedTextField
                 label="Label"
                 value={f.label || ""}
                 onChange={(e) => updateField(i, { label: e.target.value })}
@@ -102,7 +103,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 label="Read Only"
               />
 
-              <TextField
+              <DebouncedTextField
                 label="Depends On"
                 value={f.dependsOn || ""}
                 onChange={(e) => updateField(i, { dependsOn: e.target.value })}
@@ -120,7 +121,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               )}
 
               {f.type === "dynamic-select" && (
-                <TextField
+                <DebouncedTextField
                   label="Options API"
                   value={f.optionsAPI || ""}
                   onChange={(e) =>
@@ -132,7 +133,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
 
               {(f.type === "select" || f.type === "dynamic-select") && (
                 <>
-                  <TextField
+                  <DebouncedTextField
                     label="Option Label"
                     value={f.config.optionLabel || "label"}
                     onChange={(e) =>
@@ -145,7 +146,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                     }
                     size="small"
                   />
-                  <TextField
+                  <DebouncedTextField
                     label="Option Value"
                     value={f.config.optionValue || "value"}
                     onChange={(e) =>

@@ -9,6 +9,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { FieldConfig, OptionsMap } from "./types";
+import DebouncedTextField from "./components/DebouncedTextField";
 
 interface SchemaFormProps {
   fields: FieldConfig[];
@@ -120,7 +121,7 @@ export default function SchemaForm({
             case "text":
             case "number":
               return (
-                <TextField
+                <DebouncedTextField
                   key={f.name}
                   label={f.label}
                   type={f.type}
@@ -157,7 +158,7 @@ export default function SchemaForm({
 
             case "select":
               return (
-                <TextField
+                <DebouncedTextField
                   key={f.name}
                   select
                   label={f.label}
@@ -169,7 +170,7 @@ export default function SchemaForm({
                       {o.label}
                     </MenuItem>
                   ))}
-                </TextField>
+                </DebouncedTextField>
               );
 
             case "dynamic-select": {
@@ -181,7 +182,7 @@ export default function SchemaForm({
               const hasOptions = optionsData?.options?.length > 0;
 
               return (
-                <TextField
+                <DebouncedTextField
                   key={f.name}
                   select
                   label={f.label}
@@ -201,13 +202,13 @@ export default function SchemaForm({
                         {o[labelKey]}
                       </MenuItem>
                     ))}
-                </TextField>
+                </DebouncedTextField>
               );
             }
 
             case "date":
               return (
-                <TextField
+                <DebouncedTextField
                   key={f.name}
                   label={f.label}
                   type="date"

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { JsonEditor } from "../../../components/JsonEditor";
+import DebouncedTextField from "../../../components/DebouncedTextField";
 
 type ColumnsTabProps = {
   columns: any[];
@@ -30,19 +31,19 @@ export function ColumnsTab({ columns, update, add, remove }: ColumnsTabProps) {
           </AccordionSummary>
           <AccordionDetails>
             <Stack spacing={1}>
-              <TextField
+              <DebouncedTextField
                 label="Header Name"
                 value={c.headerName || ""}
                 onChange={(e) => update(i, { headerName: e.target.value })}
                 size="small"
               />
-              <TextField
+              <DebouncedTextField
                 label="Field"
                 value={c.field || ""}
                 onChange={(e) => update(i, { field: e.target.value })}
                 size="small"
               />
-              <TextField
+              <DebouncedTextField
                 label="Renderer"
                 value={c.renderer || ""}
                 onChange={(e) => update(i, { renderer: e.target.value })}

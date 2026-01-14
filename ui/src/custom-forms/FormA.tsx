@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TextField, Button, Stack } from "@mui/material";
 import { BaseFormProps } from "../types";
+import DebouncedTextField from "../components/DebouncedTextField";
 
 export type FormAData = {
   name: string;
@@ -25,13 +26,13 @@ export default function FormA({
       }}
     >
       <Stack spacing={2}>
-        <TextField
+        <DebouncedTextField
           label="Name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
-        <TextField
+        <DebouncedTextField
           label="Age"
           type="number"
           value={form.age}

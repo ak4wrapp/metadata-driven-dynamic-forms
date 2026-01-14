@@ -1,6 +1,7 @@
 import * as React from "react";
 import { TextField, Button, Stack } from "@mui/material";
 import { BaseFormProps } from "../types";
+import DebouncedTextField from "../components/DebouncedTextField";
 
 export type FormCData = {
   description: string;
@@ -25,14 +26,14 @@ export default function FormC({
       }}
     >
       <Stack spacing={2}>
-        <TextField
+        <DebouncedTextField
           label="Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
           fullWidth
         />
 
-        <TextField
+        <DebouncedTextField
           label="Quantity"
           type="number"
           value={form.quantity}

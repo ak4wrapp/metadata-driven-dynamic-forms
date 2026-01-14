@@ -7,6 +7,7 @@ import {
   Button,
   Stack,
 } from "@mui/material";
+import DebouncedTextField from "../components/DebouncedTextField";
 
 export type FormBData = {
   title: string;
@@ -31,7 +32,7 @@ export default function FormB({
       }}
     >
       <Stack spacing={2}>
-        <TextField
+        <DebouncedTextField
           label="Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}

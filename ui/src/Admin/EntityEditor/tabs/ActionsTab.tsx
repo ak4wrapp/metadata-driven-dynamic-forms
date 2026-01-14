@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { JsonEditor } from "../../../components/JsonEditor";
+import DebouncedTextField from "../../../components/DebouncedTextField";
 
 const colorOptions = [
   "inherit",
@@ -44,19 +45,19 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
           </AccordionSummary>
           <AccordionDetails>
             <Stack spacing={1}>
-              <TextField
+              <DebouncedTextField
                 label="Action ID"
                 value={a.id || ""}
                 onChange={(e) => update(i, { id: e.target.value })}
                 size="small"
               />
-              <TextField
+              <DebouncedTextField
                 label="Label"
                 value={a.label || ""}
                 onChange={(e) => update(i, { label: e.target.value })}
                 size="small"
               />
-              <TextField
+              <DebouncedTextField
                 label="Tooltip"
                 value={a.tooltip || ""}
                 onChange={(e) => update(i, { tooltip: e.target.value })}
@@ -76,7 +77,7 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
                 </Select>
               </FormControl>
 
-              <TextField
+              <DebouncedTextField
                 label="Icon"
                 value={a.icon || ""}
                 onChange={(e) => update(i, { icon: e.target.value })}
@@ -101,7 +102,7 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
               )}
 
               {a.type === "form" && (
-                <TextField
+                <DebouncedTextField
                   label="Form Component"
                   value={a.form?.component || ""}
                   onChange={(e) =>
@@ -115,7 +116,7 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
 
               {a.type === "api" && (
                 <>
-                  <TextField
+                  <DebouncedTextField
                     label="API Endpoint"
                     value={a.api || ""}
                     onChange={(e) => update(i, { api: e.target.value })}
@@ -162,7 +163,7 @@ export function ActionsTab({ actions, update, add, remove }: ActionsTabProps) {
               )}
 
               {a.type === "custom" && (
-                <TextField
+                <DebouncedTextField
                   label="Handler"
                   value={a.handler || ""}
                   onChange={(e) => update(i, { handler: e.target.value })}

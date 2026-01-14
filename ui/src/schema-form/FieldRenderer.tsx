@@ -7,6 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { FieldConfig } from "./../types";
+import DebouncedTextField from "../components/DebouncedTextField";
 
 interface Props {
   field: FieldConfig;
@@ -28,7 +29,7 @@ export function FieldRenderer({
     case "text":
     case "number":
       return (
-        <TextField
+        <DebouncedTextField
           label={field.label}
           type={field.type}
           value={value ?? ""}
@@ -67,7 +68,7 @@ export function FieldRenderer({
 
     case "select":
       return (
-        <TextField
+        <DebouncedTextField
           select
           label={field.label}
           value={value ?? ""}
@@ -80,7 +81,7 @@ export function FieldRenderer({
               {o.label}
             </MenuItem>
           ))}
-        </TextField>
+        </DebouncedTextField>
       );
 
     case "dynamic-select": {
@@ -89,7 +90,7 @@ export function FieldRenderer({
       const isLoading = dynamicOptions?.loading;
 
       return (
-        <TextField
+        <DebouncedTextField
           select
           label={field.label}
           value={value ?? ""}
@@ -117,13 +118,13 @@ export function FieldRenderer({
                 {o[labelKey]}
               </MenuItem>
             ))}
-        </TextField>
+        </DebouncedTextField>
       );
     }
 
     case "date":
       return (
-        <TextField
+        <DebouncedTextField
           label={field.label}
           type="date"
           value={value ?? ""}

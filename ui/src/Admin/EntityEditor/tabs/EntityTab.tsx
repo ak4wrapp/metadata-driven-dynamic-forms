@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import DebouncedTextField from "../../../components/DebouncedTextField";
 
 type EntityTabProps = {
   data: any;
@@ -17,7 +18,7 @@ type EntityTabProps = {
 export function EntityTab({ data, updateRoot, isEdit }: EntityTabProps) {
   return (
     <Stack spacing={1}>
-      <TextField
+      <DebouncedTextField
         label="ID"
         value={data.id}
         disabled={isEdit}
@@ -25,14 +26,14 @@ export function EntityTab({ data, updateRoot, isEdit }: EntityTabProps) {
         helperText="Unique identifier for the entity"
       />
 
-      <TextField
+      <DebouncedTextField
         label="Title"
         value={data.title}
         onChange={(e) => updateRoot("title", e.target.value)}
         helperText="Human-readable title"
       />
 
-      <TextField
+      <DebouncedTextField
         label="API"
         value={data.api}
         onChange={(e) => updateRoot("api", e.target.value)}
@@ -52,7 +53,7 @@ export function EntityTab({ data, updateRoot, isEdit }: EntityTabProps) {
       </FormControl>
 
       {data.form_type === "component" && (
-        <TextField
+        <DebouncedTextField
           label="Component"
           value={data.component}
           onChange={(e) => updateRoot("component", e.target.value)}
