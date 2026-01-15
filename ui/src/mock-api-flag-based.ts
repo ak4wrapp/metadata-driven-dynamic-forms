@@ -1,5 +1,4 @@
 // mock-api.ts
-
 type MockResponse = {
   delay?: number;
   data: any;
@@ -16,16 +15,19 @@ const mockRoutes: Record<string, MockResponse> = {
   },
 };
 
-// Simple in-memory cache inside the mock
+// In-memory cache
 const mockCache: Record<string, any> = {};
 
-export function setupMockApi() {
-  const originalFetch = window.fetch.bind(window);
+let originalFetch: typeof window.fetch | null = null;
+let isMockEnabled = false;
 
-  const mockFetch: typeof window.fetch = async (
-    input: RequestInfo | URL,
-    init?: RequestInit
-  ): Promise<Response> => {
+function mockFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit
+): Promise<Response> {
+  if (!isMockEnabled || !originalFetch) return originalFetch!(input, init);
+
+  return (async () => {
     const url =
       typeof input === "string"
         ? input
@@ -38,13 +40,11 @@ export function setupMockApi() {
     const query = parsedUrl.searchParams;
 
     // -------------------------
-    // Countries API with mock cache
+    // Countries
     // -------------------------
     if (basePath === "/api/countries") {
       if (mockCache[basePath]) {
-        // simulate network delay
         await new Promise((res) => setTimeout(res, 1000));
-
         return new Response(JSON.stringify(mockCache[basePath]), {
           status: 200,
           headers: { "Content-Type": "application/json" },
@@ -52,63 +52,43 @@ export function setupMockApi() {
       }
 
       try {
-        const res = await fetch(
+        const res = await originalFetch!(
           "https://restcountries.com/v3.1/all?fields=name,cca2"
         );
         const data = await res.json();
-
         const countries = data
-          .map((c: any) => ({
-            code: c.cca2,
-            name: c.name.common,
-          }))
+          .map((c: any) => ({ code: c.cca2, name: c.name.common }))
           .sort((a: any, b: any) => a.name.localeCompare(b.name));
-
-        // ✅ Cache in mock
         mockCache[basePath] = countries;
 
         return new Response(JSON.stringify(countries), {
           status: 200,
           headers: { "Content-Type": "application/json" },
         });
-      } catch (err) {
-        console.error("Failed to fetch countries", err);
-        return new Response(JSON.stringify([]), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+      } catch {
+        return new Response(JSON.stringify([]), { status: 200 });
       }
     }
 
     // -------------------------
-    // States API with mock cache
+    // States
     // -------------------------
     if (basePath === "/api/states") {
       const countryCode = (query.get("country") || "US").toUpperCase().trim();
 
-      // If cachedAllStates exists, just filter
       if (mockCache["/api/states"]) {
-        await new Promise((res) => setTimeout(res, 1000)); // simulate 1s delay
-
-        const allStates: any[] = mockCache["/api/states"];
-        const states = allStates
-          .filter((s) => s.countryCode === countryCode)
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        return new Response(JSON.stringify(states), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        await new Promise((res) => setTimeout(res, 1000));
+        const states = mockCache["/api/states"]
+          .filter((s: any) => s.countryCode === countryCode)
+          .sort((a: any, b: any) => a.name.localeCompare(b.name));
+        return new Response(JSON.stringify(states), { status: 200 });
       }
 
-      // Fetch all states from external API
       try {
-        const res = await fetch(
+        const res = await originalFetch!(
           "https://countriesnow.space/api/v0.1/countries/states"
         );
         const json = await res.json();
-
-        // Flatten all states with country code
         const allStates = json.data.flatMap((c: any) =>
           c.states.map((s: any) => ({
             countryCode: c.iso2?.toUpperCase() || c.name.toUpperCase(),
@@ -116,28 +96,16 @@ export function setupMockApi() {
             name: s.name,
           }))
         );
-
-        // Cache all states
         mockCache["/api/states"] = allStates;
 
-        // Filter for requested country
         const states = allStates
-          .filter((s) => s.countryCode === countryCode)
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        // Simulate network delay
+          .filter((s: any) => s.countryCode === countryCode)
+          .sort((a: any, b: any) => a.name.localeCompare(b.name));
         await new Promise((res) => setTimeout(res, 1000));
 
-        return new Response(JSON.stringify(states), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
-      } catch (err) {
-        console.error("Failed to fetch states for country:", countryCode, err);
-        return new Response(JSON.stringify([]), {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        });
+        return new Response(JSON.stringify(states), { status: 200 });
+      } catch {
+        return new Response(JSON.stringify([]), { status: 200 });
       }
     }
 
@@ -147,17 +115,27 @@ export function setupMockApi() {
     if (mockRoutes[basePath]) {
       const { delay = 100, data } = mockRoutes[basePath];
       await new Promise((res) => setTimeout(res, delay));
-
-      return new Response(JSON.stringify(data), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(JSON.stringify(data), { status: 200 });
     }
 
-    // fallback to real fetch
-    await new Promise((res) => setTimeout(res, 100));
-    return originalFetch(input, init);
-  };
+    return originalFetch!(input, init);
+  })();
+}
 
-  window.fetch = mockFetch;
+export function enableMockApi() {
+  if (isMockEnabled) return;
+  originalFetch = window.fetch.bind(window);
+  window.fetch = mockFetch as any;
+  isMockEnabled = true;
+}
+
+export function disableMockApi() {
+  if (!isMockEnabled) return;
+  if (originalFetch) window.fetch = originalFetch;
+  isMockEnabled = false;
+}
+
+// Optional: initialize automatically based on localStorage flag
+if (localStorage.getItem("USE_MOCK_API") === "true") {
+  enableMockApi();
 }
