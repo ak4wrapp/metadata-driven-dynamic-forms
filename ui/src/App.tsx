@@ -1,7 +1,13 @@
 // ui/src/App.tsx
-import * as React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import AppRoute from "./AppRoute";
+import { queryClient } from "./queryClient";
 
 export default function App() {
-  return <AppRoute />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppRoute />
+    </QueryClientProvider>
+  );
 }

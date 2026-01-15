@@ -1,11 +1,6 @@
 // ui/src/hooks/useAPI.ts
 import * as React from "react";
-
-// Determine WS URL dynamically
-const BASE_URL =
-  window.location.hostname === "localhost"
-    ? "http://127.0.0.1:3000"
-    : "https://metadata-driven-dynamic-forms.onrender.com";
+import { useFetchAPI } from "./useFetchAPI";
 
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -13,7 +8,7 @@ interface UseAPIOptions {
   method?: Method;
   body?: any;
   headers?: Record<string, string>;
-  autoFetch?: boolean; // automatically call on mount
+  autoFetch?: boolean;
 }
 
 interface UseAPIResult<T = any> {
@@ -31,6 +26,7 @@ export function useAPI<T = any>(
   options: UseAPIOptions = {}
 ): UseAPIResult<T> {
   const { method = "GET", autoFetch = false } = options;
+  const { fetchInternal } = useFetchAPI();
 
   const [data, setData] = React.useState<T | null>(null);
   const [loading, setLoading] = React.useState<boolean>(autoFetch);
@@ -38,31 +34,19 @@ export function useAPI<T = any>(
 
   const callAPI = React.useCallback(
     async (overrideUrl?: string, overrideOptions?: UseAPIOptions) => {
-      const fetchUrl = overrideUrl
-        ? `${BASE_URL}${overrideUrl}`
-        : `${BASE_URL}${url}`;
-      const m = overrideOptions?.method || method;
-      const b = overrideOptions?.body;
-      const h = overrideOptions?.headers || {};
-
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(fetchUrl, {
-          method: m,
-          headers: { "Content-Type": "application/json", ...h },
-          body: b ? JSON.stringify(b) : undefined,
+        const result = await fetchInternal<T>(overrideUrl ?? url, {
+          method: overrideOptions?.method ?? method,
+          body: overrideOptions?.body,
+          headers: overrideOptions?.headers,
+          cache: true,
         });
 
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(text || res.statusText);
-        }
-
-        const json = await res.json();
-        setData(json);
-        return json;
+        setData(result);
+        return result;
       } catch (err) {
         setError(err);
         console.error("API call failed:", err);
@@ -71,10 +55,9 @@ export function useAPI<T = any>(
         setLoading(false);
       }
     },
-    [url, method] // <-- only url and method, no body/headers
+    [url, method, fetchInternal]
   );
 
-  // Auto-fetch on mount if requested
   React.useEffect(() => {
     if (autoFetch) callAPI();
   }, [autoFetch, callAPI]);
