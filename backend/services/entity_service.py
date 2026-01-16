@@ -1,10 +1,13 @@
-# backend/services/entity_service.py
 from flask import json
 from sqlalchemy import text
 from db import engine
 
 
 class EntityService:
+    @staticmethod
+    def _int_to_bool(value) -> bool:
+        return bool(value)
+
     @staticmethod
     def list():
         """List all entities"""
@@ -70,17 +73,19 @@ class EntityService:
                 {"id": entity_id},
             ).mappings().all()
 
-        # JSON parsing
+        # JSON parsing + boolean normalization
         parsed_cols = []
         for c in cols:
             c = dict(c)
             c["renderer_params"] = json.loads(c["renderer_params"] or "{}")
+            c["hidden"] = EntityService._int_to_bool(c["hidden"])
             parsed_cols.append(c)
 
         parsed_flds = []
         for f in flds:
             f = dict(f)
             f["config"] = json.loads(f["config"] or "{}")
+            f["required"] = EntityService._int_to_bool(f["required"])
             parsed_flds.append(f)
 
         parsed_acts = []
@@ -93,9 +98,9 @@ class EntityService:
         e["columns"] = parsed_cols
         e["fields"] = parsed_flds
         e["actions"] = parsed_acts
-       
+
         return e
-    
+
     @staticmethod
     def list_full():
         """

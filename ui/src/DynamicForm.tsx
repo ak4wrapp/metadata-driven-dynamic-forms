@@ -29,11 +29,11 @@ export function DynamicForm({
     );
   }
 
-  const LazySchemaForm = React.lazy(() => import("./SchemaForm"));
+  const LazySchemaForm2 = React.lazy(() => import("./SchemaForm"));
 
   return (
     <React.Suspense fallback={<CircularProgress />}>
-      <LazySchemaForm
+      <LazySchemaForm2
         fields={form.fields}
         mode={mode}
         initialData={initialData}

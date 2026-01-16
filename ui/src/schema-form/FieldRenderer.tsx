@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { FieldConfig } from "./../types";
 import DebouncedTextField from "../components/DebouncedTextField";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 interface Props {
   field: FieldConfig;
@@ -123,18 +125,25 @@ export function FieldRenderer({
     }
 
     case "date":
+      const dayjsValue =
+        value && typeof value === "string" ? dayjs(value) : value ?? null;
+
       return (
-        <DebouncedTextField
+        <DatePicker
           label={field.label}
-          type="date"
-          value={value ?? ""}
-          onChange={(e) => onChange(field.name, e.target.value)}
-          error={!!error}
-          helperText={error}
-          variant="standard"
+          value={dayjsValue}
+          onChange={(newValue) =>
+            onChange(
+              field.name,
+              newValue ? newValue.format("YYYY-MM-DD") : null
+            )
+          }
           slotProps={{
-            inputLabel: {
-              shrink: true,
+            textField: {
+              fullWidth: true,
+              error: !!error,
+              helperText: error,
+              variant: "outlined",
             },
           }}
         />
