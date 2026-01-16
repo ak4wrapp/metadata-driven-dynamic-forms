@@ -124,8 +124,9 @@ export default function SchemaForm({
                 <DebouncedTextField
                   key={f.name}
                   label={f.label}
+                  variant="standard"
                   type={f.type}
-                  value={state[f.name] ?? ""}
+                  value={state[f.name] ?? (f.type === "number" ? 0 : "")}
                   required={f.required}
                   onChange={(e) =>
                     setState({

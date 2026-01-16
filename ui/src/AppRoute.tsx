@@ -6,6 +6,7 @@ import {
   Route,
   useLocation,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import { Box, Button, ButtonGroup } from "@mui/material";
 
@@ -52,7 +53,7 @@ export default function AppRoute() {
       <Navigation />
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/dynamic-landing" replace />} />
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/dynamic-landing" element={<DynamicLanding />} />
         <Route path="/admin" element={<AdminEntities />} />

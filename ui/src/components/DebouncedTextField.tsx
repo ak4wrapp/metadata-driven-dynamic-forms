@@ -11,6 +11,7 @@ export default function DebouncedTextField({
   debounceMs = 300,
   ...props
 }: DebouncedTextFieldProps) {
+  console.log("props: ", props);
   const [localValue, setLocalValue] = useState(value ?? "");
   const timeoutRef = useRef<number | null>(null);
 
