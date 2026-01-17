@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const BASE_URL =
   window.location.hostname === "localhost"
-    ? "http://127.0.0.1:3000"
+    ? "http://127.0.0.1:5050"
     : "https://metadata-driven-dynamic-forms.onrender.com";
 
 export type FetchOptions = {
