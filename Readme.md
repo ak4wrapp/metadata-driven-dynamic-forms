@@ -502,6 +502,16 @@ SQLite (rules.db file)
 
 ```bash
 cd backend
+python -m venv venv
+# for windows
+.\venv\Scripts\activate
+# for mac
+source venv/bin/activate\
+
+# To deactivate later
+deactivate
+
+
 pip install -r requirements.txt
 python init_db.py
 
