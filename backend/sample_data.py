@@ -60,9 +60,9 @@ ENTITIES = [
                 "icon": "block",
                 "iconColor": "error",
                 "type": "api",
-                "api": "/api/data/a/deactivate",
+                "api": "/api/data/a/delete",
                 "dialogOptions": {"title": "Deactivate Item", "content": "Are you sure you want to deactivate this item?"},
-                "method": "POST",
+                "method": "DELETE",
                 "confirm": True,
             },
             {

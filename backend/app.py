@@ -5,10 +5,10 @@ from flask import Flask, Response, json
 from flask_cors import CORS
 from flask_restx import Api
 
-from controllers.admin_entities import bp as admin_bp
-from controllers.entity import bp as entity_bp
-from controllers.data import bp as data_bp
-from controllers.health import bp as health_check_bp
+from controllers.admin_controller import bp as admin_bp
+from controllers.entity_controller import bp as entity_bp
+from controllers.data_controller import bp as data_bp
+from controllers.health_controller import bp as health_check_bp
 
 # Helper functions
 def to_camel_case(snake_str):

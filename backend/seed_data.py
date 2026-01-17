@@ -11,7 +11,7 @@ import argparse
 import json
 from sqlalchemy import text
 from db import engine
-from seed_rows_config import ENTITIES
+from sample_data import ENTITIES
 
 # -----------------------------
 # Seeder Logic

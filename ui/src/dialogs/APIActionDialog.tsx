@@ -23,6 +23,7 @@ export const ApiActionDialog: React.FC<ApiActionDialogProps> = ({
   const runApi = async () => {
     try {
       setLoading(true);
+      console.info(row);
       await fetch(actionApi, {
         method,
         headers: { "Content-Type": "application/json" },

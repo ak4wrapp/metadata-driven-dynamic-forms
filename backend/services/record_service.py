@@ -89,3 +89,4 @@ class RecordService:
                 """),
                 {"id": record_id, "eid": entity_id},
             )
+
