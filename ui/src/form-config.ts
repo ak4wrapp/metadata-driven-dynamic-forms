@@ -40,6 +40,7 @@ export type ActionConfig =
       id: string;
       label: string;
       type: "api";
+      idField?: "id";
       dialogOptions?: DialogOptions;
       icon?: string;
       iconColor?: ColorOption;

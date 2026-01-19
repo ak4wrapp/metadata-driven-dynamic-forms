@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS entity_actions (
   icon_color TEXT,
   form TEXT,            -- JSON for form type
   api TEXT,
+  id_field TEXT,   -- ID Field which will be used for oeprations
   method TEXT,
   confirm BOOLEAN,
   handler TEXT,

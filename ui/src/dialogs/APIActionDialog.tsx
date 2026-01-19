@@ -1,8 +1,11 @@
 // ui/src/dialogs/APIActionDialog.tsx
 import * as React from "react";
 import { Box, Button, CircularProgress } from "@mui/material";
+import { ActionConfig } from "../form-config";
+import { useAPI } from "../hooks/useAPI";
 
 export type ApiActionDialogProps = {
+  action: ActionConfig;
   actionApi: string;
   method?: "POST" | "PUT" | "DELETE";
   row: any;
@@ -12,6 +15,7 @@ export type ApiActionDialogProps = {
 };
 
 export const ApiActionDialog: React.FC<ApiActionDialogProps> = ({
+  action,
   actionApi,
   method = "POST",
   row,
@@ -19,16 +23,47 @@ export const ApiActionDialog: React.FC<ApiActionDialogProps> = ({
   onClose,
 }) => {
   const [loading, setLoading] = React.useState(false);
+  const {
+    data,
+    loading: apiActionLoading,
+    callAPI,
+  } = useAPI("/api/admin/entities", {
+    autoFetch: false,
+  });
+  function buildApiUrl(action, row) {
+    // prefer explicit id_field, but fall back to "id"
+    const primaryField = action.idField || "id";
+
+    let idValue = row[primaryField];
+
+    // fallback if explicit field is missing
+    if (idValue === undefined || idValue === null) {
+      idValue = row.id;
+    }
+
+    if (idValue === undefined || idValue === null) {
+      throw new Error(`No identifier found. Tried "${primaryField}" and "id".`);
+    }
+
+    return action.api.replace("{id}", idValue);
+  }
 
   const runApi = async () => {
     try {
       setLoading(true);
-      console.info(row);
-      await fetch(actionApi, {
-        method,
+      const finalActionApi = buildApiUrl(action, row);
+      console.info(row, finalActionApi);
+
+      const result = await callAPI(finalActionApi, {
+        method: method ?? "GET",
+        body: method === "POST" ? JSON.stringify(row) : undefined,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(row),
       });
+
+      if (result) {
+        console.log("Action succeeded:", result);
+        // Optionally refresh table or show notification
+      }
     } catch (err) {
       console.error("API action failed:", err);
     } finally {

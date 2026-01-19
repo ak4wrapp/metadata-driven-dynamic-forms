@@ -63,6 +63,7 @@ export default function LandingPage() {
         setDialogTitle(dialogOpts.title);
         setDialogContent(
           <ApiActionDialog
+            action={action}
             actionApi={action.api!}
             method={action.method}
             row={row}

@@ -1,9 +1,11 @@
 from flask_restx import Namespace, Resource
 from flask import request
 from services.record_service import RecordService
+import logging
 
 bp = Namespace("user_records", description="User records operations")
 
+logger = logging.getLogger()
 @bp.route('/<string:entity_id>')
 class RecordList(Resource):
     def get(self, entity_id):
@@ -22,4 +24,5 @@ class Record(Resource):
 
     def delete(self, entity_id, record_id):
         """Delete a record"""
+        logger.info("delete called")
         return RecordService.delete(entity_id, record_id)
