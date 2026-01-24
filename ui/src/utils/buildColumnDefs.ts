@@ -7,7 +7,7 @@ import { cellRendererRegistry } from "../cell-renderers/cellRendererRegistry";
 export function buildColumnDefs(
   columns: any[], // backend ColumnConfig[]
   actions?: ActionConfig[],
-  onAction?: (action: ActionConfig, row: any) => void
+  onAction?: (action: ActionConfig, row: any) => void,
 ): ColDef[] {
   const baseCols: ColDef[] = columns.map((col) => {
     const rendererFactory = col.renderer

@@ -5,6 +5,7 @@ import { DynamicForm } from "./DynamicForm";
 import { buildColumnDefs } from "./utils/buildColumnDefs";
 import { useEntityController } from "./hooks/useEntityController";
 import { useState, useMemo } from "react";
+import { ComponentFormDefinition, SchemaFormDefinition } from "./form-config";
 
 export function DynamicLanding() {
   const {
@@ -26,7 +27,7 @@ export function DynamicLanding() {
     return buildColumnDefs(
       activeEntity.columns,
       activeEntity.actions ?? [],
-      (action, row) => console.log("Action triggered", action, row)
+      (action, row) => console.log("Action triggered", action, row),
     );
   }, [columnsReady, activeEntity]);
 
@@ -46,7 +47,7 @@ export function DynamicLanding() {
       activeEntity.fields.reduce((acc, f) => {
         acc[f.name] = "";
         return acc;
-      }, {} as any)
+      }, {} as any),
     );
     setDialogMode("create");
     setCrudDialogOpen(true);
@@ -69,16 +70,45 @@ export function DynamicLanding() {
         Dynamic Entities
       </Typography>
 
+      <Box>
+        <Typography variant="subtitle1">Entity types:</Typography>
+        <Typography variant="body2">
+          • <strong>Custom Forms</strong> — use a predefined React form
+          component.
+          <br />• <strong>Schema Forms</strong> — are automatically generated
+          from field definitions.
+        </Typography>
+      </Box>
+
       <Box sx={{ py: 2, display: "flex", gap: 2 }}>
-        {entities.map((e) => (
-          <Button
-            key={e.id}
-            variant={activeEntityMeta.id === e.id ? "contained" : "outlined"}
-            onClick={() => setActiveEntityMeta(e)}
-          >
-            {e.title}
-          </Button>
-        ))}
+        {entities.map((e) => {
+          const isActive = activeEntityMeta.id === e.id;
+          const color = e.formType === "schema" ? "primary" : "secondary";
+
+          return (
+            <Button
+              key={e.id}
+              variant={isActive ? "contained" : "outlined"}
+              color={color}
+              onClick={() => setActiveEntityMeta(e)}
+              startIcon={
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    bgcolor:
+                      e.formType === "schema"
+                        ? "primary.main"
+                        : "secondary.main",
+                  }}
+                ></Box>
+              }
+            >
+              {e.title}
+            </Button>
+          );
+        })}
       </Box>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
@@ -104,7 +134,11 @@ export function DynamicLanding() {
       >
         {dialogData && (
           <DynamicForm
-            form={{ type: "schema", fields: activeEntity.fields }}
+            form={
+              activeEntity.formType === "component"
+                ? (activeEntity as ComponentFormDefinition)
+                : (activeEntity as SchemaFormDefinition)
+            }
             initialData={dialogData}
             mode={dialogMode}
             onSubmit={handleSubmit}

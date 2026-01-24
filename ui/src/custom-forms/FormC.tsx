@@ -13,6 +13,7 @@ export default function FormC({
   initialData,
   onSubmit,
 }: BaseFormProps<FormCData>) {
+  console.log("FormC initialData: ", initialData);
   const [form, setForm] = React.useState<FormCData>({
     description: initialData?.description ?? "",
     quantity: initialData?.quantity ?? 0,

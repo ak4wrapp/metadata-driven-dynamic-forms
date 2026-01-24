@@ -110,6 +110,24 @@ ENTITIES = [
         ],
     },
 
+    # Custom Form A
+    {
+        "id": "A",
+        "title": "Custom Form A",
+        "api": "/api/data/a",
+        "form_type": "component",
+        "component": "FormA",
+        "columns": [
+            {"header": "Title", "field": "title"},
+            {"header": "Active Status", "field": "isActive"},
+        ],
+        "rows": [
+            {"title": "Sample Title", "isActive": True},
+            {"title": "Another Title", "isActive": False},
+            {"title": "Third Title", "isActive": True},
+        ],
+    },
+
     # Custom Form B
     {
         "id": "B",

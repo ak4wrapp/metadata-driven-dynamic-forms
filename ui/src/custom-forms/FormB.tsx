@@ -19,6 +19,8 @@ export default function FormB({
   initialData,
   onSubmit,
 }: BaseFormProps<FormBData>) {
+  console.log("FormB initialData: ", initialData);
+
   const [form, setForm] = React.useState<FormBData>({
     title: initialData?.title ?? "",
     isActive: initialData?.isActive ?? false,

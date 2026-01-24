@@ -16,7 +16,7 @@ export function DynamicForm({
   initialData,
   onSubmit,
 }: DynamicFormProps) {
-  if (form.type === "component") {
+  if (form.formType === "component") {
     const ComponentKey = form.component as keyof typeof formRegistry;
     const CustomForm = formRegistry[ComponentKey];
 

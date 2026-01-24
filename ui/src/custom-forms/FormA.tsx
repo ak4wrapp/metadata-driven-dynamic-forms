@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TextField, Button, Stack } from "@mui/material";
+import { TextField, Button, Stack, Typography } from "@mui/material";
 import { BaseFormProps } from "../types";
 import DebouncedTextField from "../components/DebouncedTextField";
 
@@ -13,6 +13,7 @@ export default function FormA({
   initialData,
   onSubmit,
 }: BaseFormProps<FormAData>) {
+  console.log("FormA initialData: ", initialData);
   const [form, setForm] = React.useState<FormAData>({
     name: initialData?.name ?? "",
     age: initialData?.age ?? 0,
@@ -26,6 +27,7 @@ export default function FormA({
       }}
     >
       <Stack spacing={2}>
+        <Typography variant="h6">{mode === "create" ? "Create Form A" : "Edit Form A"}</Typography>
         <DebouncedTextField
           label="Name"
           value={form.name}

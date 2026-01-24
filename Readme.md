@@ -507,6 +507,9 @@ python -m venv venv
 .\venv\Scripts\activate
 # for mac
 source venv/bin/activate\
+# for git bash
+source venv/Scripts/activate
+
 
 # To deactivate later
 deactivate

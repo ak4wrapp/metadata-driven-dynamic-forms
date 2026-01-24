@@ -6,7 +6,9 @@ export type Entity = {
   title: string;
   api: string;
   columns: any[];
+  component?: string;
   fields: any[];
+  formType: "schema" | "component";
   actions?: any[];
   rows?: any[];
 };

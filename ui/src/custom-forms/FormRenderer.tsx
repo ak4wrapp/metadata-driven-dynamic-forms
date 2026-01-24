@@ -43,6 +43,7 @@ export function FormRenderer<K extends keyof FormDataMap>({
   data,
   onSubmit,
 }: FormRendererProps<K>) {
+  console.log("FormRenderer data: ", data);
   // Step 1: get component key
   const componentKey = FormKeyToComponentMap[entityKey];
 

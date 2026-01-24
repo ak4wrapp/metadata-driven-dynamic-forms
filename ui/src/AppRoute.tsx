@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 import { Box, Button, ButtonGroup } from "@mui/material";
 
-import LandingPage from "./LandingPage";
 import { DynamicLanding } from "./DynamicLanding";
 import { AdminEntities } from "./Admin/AdminEntities";
 
@@ -21,12 +20,6 @@ function Navigation() {
   return (
     <Box sx={{ mb: 2 }}>
       <ButtonGroup variant="contained" aria-label="navigation button group">
-        <Button
-          color={location.pathname === "/landing" ? "primary" : "inherit"}
-          onClick={() => navigate("/landing")}
-        >
-          Form Builder (using local config data)
-        </Button>
         <Button
           color={
             location.pathname === "/dynamic-landing" ? "primary" : "inherit"
@@ -54,12 +47,11 @@ export default function AppRoute() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/dynamic-landing" replace />} />
-        <Route path="/landing" element={<LandingPage />} />
         <Route path="/dynamic-landing" element={<DynamicLanding />} />
         <Route path="/admin" element={<AdminEntities />} />
 
         {/* Optional fallback */}
-        <Route path="*" element={<LandingPage />} />
+        <Route path="*" element={<DynamicLanding />} />
       </Routes>
     </BrowserRouter>
   );
