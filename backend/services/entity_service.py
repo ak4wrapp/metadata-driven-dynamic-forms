@@ -159,3 +159,127 @@ class EntityService:
                 """),
                 {"id": entity_id},
             )
+
+    @staticmethod
+    def update_full(entity_id: str, data: dict):
+        """
+        ADMIN ONLY.
+        Replaces full entity schema (entity + columns + fields + actions).
+        Accepts camelCase or snake_case payloads.
+        """
+        with engine.begin() as conn:
+            # --- update base entity ---
+            conn.execute(
+                text("""
+                    UPDATE entities
+                    SET title = :title,
+                        api = :api,
+                        form_type = :form_type,
+                        component = :component
+                    WHERE LOWER(id) = LOWER(:id)
+                """),
+                {
+                    "id": entity_id,
+                    "title": data.get("title"),
+                    "api": data.get("api"),
+                    "form_type": data.get("form_type") or data.get("formType"),
+                    "component": data.get("component"),
+                },
+            )
+
+            # --- wipe dependent tables ---
+            conn.execute(
+                text("DELETE FROM entity_columns WHERE LOWER(entity_id) = LOWER(:id)"),
+                {"id": entity_id},
+            )
+            conn.execute(
+                text("DELETE FROM entity_fields WHERE LOWER(entity_id) = LOWER(:id)"),
+                {"id": entity_id},
+            )
+            conn.execute(
+                text("DELETE FROM entity_actions WHERE LOWER(entity_id) = LOWER(:id)"),
+                {"id": entity_id},
+            )
+
+            # --- reinsert columns ---
+            for c in data.get("columns", []):
+                conn.execute(
+                    text("""
+                        INSERT INTO entity_columns (
+                            id, entity_id, header_name, field,
+                            renderer, renderer_params, hidden, sort_order
+                        )
+                        VALUES (
+                            :id, :entity_id, :header_name, :field,
+                            :renderer, :renderer_params, :hidden, :sort_order
+                        )
+                    """),
+                    {
+                        "id": c.get("id"),
+                        "entity_id": entity_id,
+                        "header_name": c.get("header_name") or c.get("headerName"),
+                        "field": c.get("field"),
+                        "renderer": c.get("renderer"),
+                        "renderer_params": json.dumps(
+                            c.get("renderer_params") or c.get("rendererParams", {})
+                        ),
+                        "hidden": int(bool(c.get("hidden"))),
+                        "sort_order": c.get("sort_order", c.get("sortOrder", 0)),
+                    },
+                )
+
+            # --- reinsert fields ---
+            for f in data.get("fields", []):
+                conn.execute(
+                    text("""
+                        INSERT INTO entity_fields (
+                            id, entity_id, name, label, type,
+                            required, depends_on, config, sort_order
+                        )
+                        VALUES (
+                            :id, :entity_id, :name, :label, :type,
+                            :required, :depends_on, :config, :sort_order
+                        )
+                    """),
+                    {
+                        "id": f.get("id"),
+                        "entity_id": entity_id,
+                        "name": f.get("name"),
+                        "label": f.get("label"),
+                        "type": f.get("type"),
+                        "required": int(bool(f.get("required"))),
+                        "depends_on": f.get("depends_on") or f.get("dependsOn"),
+                        "config": json.dumps(
+                            f.get("config", {})
+                        ),
+                        "sort_order": f.get("sort_order", f.get("sortOrder", 0)),
+                    },
+                )
+
+            # --- reinsert actions ---
+            for a in data.get("actions", []):
+                conn.execute(
+                    text("""
+                        INSERT INTO entity_actions (
+                            id, entity_id, name, label, type,
+                            form, dialog_options
+                        )
+                        VALUES (
+                            :id, :entity_id, :name, :label, :type,
+                            :form, :dialog_options
+                        )
+                    """),
+                    {
+                        "id": a["id"],
+                        "entity_id": entity_id,
+                        "name": a.get("name"),
+                        "label": a.get("label"),
+                        "type": a.get("type"),
+                        "form": json.dumps(
+                            a.get("form", {})
+                        ),
+                        "dialog_options": json.dumps(
+                            a.get("dialog_options") or a.get("dialogOptions", {})
+                        ),
+                    },
+                )

@@ -10,7 +10,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS entities (
   id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
-  api TEXT NOT NULL,
+  api TEXT NOT NULL, -- API endpoint for data operations
   form_type TEXT NOT NULL CHECK (form_type IN ('schema', 'component')),
   component TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
