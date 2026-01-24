@@ -4,11 +4,11 @@ import { FieldConfig } from "./types";
 
 type ActionFormConfig =
   | {
-      type: "schema";
+      formType: "schema";
       fields: FieldConfig[];
     }
   | {
-      type: "component";
+      formType: "component";
       component: string;
     };
 
