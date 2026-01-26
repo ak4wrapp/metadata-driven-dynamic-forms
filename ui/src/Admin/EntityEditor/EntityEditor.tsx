@@ -15,6 +15,12 @@ type EntityEditorProps = {
 
 function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
   const [tab, setTab] = React.useState(0);
+  const [gridTab, setGridTab] = React.useState(0);
+
+  React.useEffect(() => {
+    // Reset grid tab when entity changes
+    setGridTab(0);
+  }, [entity]);
 
   const normalizeEntity = (entity: any) => ({
     id: entity.id ?? "",
@@ -68,10 +74,21 @@ function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
     <Box sx={{ minWidth: 600 }}>
       <Tabs value={tab} onChange={(_, v) => setTab(v)}>
         <Tab label="Entity" />
-        <Tab label="Columns" />
-        <Tab label="Fields" />
-        <Tab label="Actions" />
+        <Tab label="Grid" />
+        {/* Show Form Fields tab only for schema form type as for component form type we will provide custom form name*/}
+        {data.form_type === "schema" && <Tab label="Form Fields" />}
       </Tabs>
+
+      {tab === 1 && (
+        <Tabs
+          value={gridTab}
+          onChange={(_, gt) => setGridTab(gt)}
+          sx={{ mt: 2 }}
+        >
+          <Tab label="Columns" />
+          <Tab label="Row Actions" />
+        </Tabs>
+      )}
 
       <Divider sx={{ my: 2 }} />
 
@@ -79,12 +96,21 @@ function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
         <EntityTab data={data} updateRoot={updateRoot} isEdit={!!entity.id} />
       )}
 
-      {tab === 1 && (
+      {tab === 1 && gridTab === 0 && (
         <ColumnsTab
           columns={data.columns}
           update={(i, p) => updateArrayItem("columns", i, p)}
           add={(item) => addArrayItem("columns", item)}
           remove={(i) => removeArrayItem("columns", i)}
+        />
+      )}
+
+      {tab === 1 && gridTab === 1 && (
+        <ActionsTab
+          actions={data.actions}
+          update={(i, p) => updateArrayItem("actions", i, p)}
+          add={(item) => addArrayItem("actions", item)}
+          remove={(i) => removeArrayItem("actions", i)}
         />
       )}
 
@@ -94,15 +120,6 @@ function EntityEditorComponent({ entity, onSave }: EntityEditorProps) {
           update={(i, p) => updateArrayItem("fields", i, p)}
           add={(item) => addArrayItem("fields", item)}
           remove={(i) => removeArrayItem("fields", i)}
-        />
-      )}
-
-      {tab === 3 && (
-        <ActionsTab
-          actions={data.actions}
-          update={(i, p) => updateArrayItem("actions", i, p)}
-          add={(item) => addArrayItem("actions", item)}
-          remove={(i) => removeArrayItem("actions", i)}
         />
       )}
 
