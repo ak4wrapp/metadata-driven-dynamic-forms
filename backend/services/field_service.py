@@ -17,7 +17,7 @@ class FieldService:
         with engine.connect() as conn:
             rows = conn.execute(
                 text("""
-                    SELECT id, name, label, type, required, depends_on, config, sort_order
+                    SELECT id, name, label, type, required, depends_on, sort_order
                     FROM entity_fields
                     WHERE LOWER(entity_id) = LOWER(:eid)
                     ORDER BY sort_order ASC
@@ -28,35 +28,26 @@ class FieldService:
         result = []
         for r in rows:
             row = dict(r)
-
             # Convert required: 0/1 → bool
             row["required"] = FieldService._int_to_bool(row["required"])
-
-            if row["config"]:
-                row["config"] = json.loads(row["config"])
-
             result.append(row)
-
         return result
 
     @staticmethod
     def create(entity_id: str, data: dict):
         data = data.copy()
-
         # Convert required: bool → 0/1
         data["required"] = FieldService._bool_to_int(data.get("required", False))
-        data["config"] = json.dumps(data.get("config", {}))
-
         with engine.begin() as conn:
             res = conn.execute(
                 text("""
                     INSERT INTO entity_fields (
                         entity_id, name, label, type,
-                        required, depends_on, config, sort_order
+                        required, depends_on, sort_order
                     )
                     VALUES (
                         :entity_id, :name, :label, :type,
-                        :required, :depends_on, :config, :sort_order
+                        :required, :depends_on, :sort_order
                     )
                 """),
                 {"entity_id": entity_id, **data},
@@ -66,11 +57,8 @@ class FieldService:
     @staticmethod
     def update(entity_id: str, field_id: int, data: dict):
         data = data.copy()
-
         # Convert required: bool → 0/1
         data["required"] = FieldService._bool_to_int(data.get("required", False))
-        data["config"] = json.dumps(data.get("config", {}))
-
         with engine.begin() as conn:
             conn.execute(
                 text("""
@@ -80,7 +68,6 @@ class FieldService:
                         type = :type,
                         required = :required,
                         depends_on = :depends_on,
-                        config = :config,
                         sort_order = :sort_order
                     WHERE id = :id
                       AND LOWER(entity_id) = LOWER(:entity_id)

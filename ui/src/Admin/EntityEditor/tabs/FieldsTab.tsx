@@ -64,6 +64,13 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 size="small"
               />
 
+              <DebouncedTextField
+                label="Depends On"
+                value={f.dependsOn || ""}
+                onChange={(e) => updateField(i, { dependsOn: e.target.value })}
+                size="small"
+              />
+
               <FormControl size="small">
                 <InputLabel>Type</InputLabel>
                 <Select
@@ -78,6 +85,54 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                   ))}
                 </Select>
               </FormControl>
+
+              {f.type === "select" && (
+                <JsonEditor
+                  label="Options (JSON)"
+                  value={f.options}
+                  onChange={(val) => updateField(i, { options: val })}
+                  height={120}
+                  helperText={`Static select options as [{ ${
+                    f.optionLabel || "label"
+                  }, ${f.optionValue || "value"} }]`}
+                />
+              )}
+
+              {f.type === "dynamic-select" && (
+                <DebouncedTextField
+                  label="Options API"
+                  value={f.optionsAPI || ""}
+                  onChange={(e) =>
+                    updateField(i, { optionsAPI: e.target.value })
+                  }
+                  size="small"
+                />
+              )}
+
+              {(f.type === "select" || f.type === "dynamic-select") && (
+                <>
+                  <DebouncedTextField
+                    label="Option Label"
+                    value={f.optionLabel || "label"}
+                    onChange={(e) =>
+                      updateField(i, {
+                        optionLabel: e.target.value,
+                      })
+                    }
+                    size="small"
+                  />
+                  <DebouncedTextField
+                    label="Option Value"
+                    value={f.optionValue || "value"}
+                    onChange={(e) =>
+                      updateField(i, {
+                        optionValue: e.target.value,
+                      })
+                    }
+                    size="small"
+                  />
+                </>
+              )}
 
               <FormControlLabel
                 control={
@@ -102,65 +157,6 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 }
                 label="Read Only"
               />
-
-              <DebouncedTextField
-                label="Depends On"
-                value={f.dependsOn || ""}
-                onChange={(e) => updateField(i, { dependsOn: e.target.value })}
-                size="small"
-              />
-
-              {f.type === "select" && (
-                <JsonEditor
-                  label="Options (JSON)"
-                  value={f.options}
-                  onChange={(val) => updateField(i, { options: val })}
-                  height={120}
-                  helperText="Static select options as [{ label, value }]"
-                />
-              )}
-
-              {f.type === "dynamic-select" && (
-                <DebouncedTextField
-                  label="Options API"
-                  value={f.optionsAPI || ""}
-                  onChange={(e) =>
-                    updateField(i, { optionsAPI: e.target.value })
-                  }
-                  size="small"
-                />
-              )}
-
-              {(f.type === "select" || f.type === "dynamic-select") && (
-                <>
-                  <DebouncedTextField
-                    label="Option Label"
-                    value={f.config.optionLabel || "label"}
-                    onChange={(e) =>
-                      updateField(i, {
-                        config: {
-                          ...f.config,
-                          optionLabel: e.target.value,
-                        },
-                      })
-                    }
-                    size="small"
-                  />
-                  <DebouncedTextField
-                    label="Option Value"
-                    value={f.config.optionValue || "value"}
-                    onChange={(e) =>
-                      updateField(i, {
-                        config: {
-                          ...f.config,
-                          optionValue: e.target.value,
-                        },
-                      })
-                    }
-                    size="small"
-                  />
-                </>
-              )}
 
               <Button color="error" onClick={() => remove(i)} size="small">
                 Remove

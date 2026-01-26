@@ -43,7 +43,9 @@ CREATE TABLE IF NOT EXISTS entity_fields (
   type TEXT NOT NULL,
   required BOOLEAN DEFAULT 0,
   depends_on TEXT,
-  config TEXT,
+  options_api TEXT,
+  option_label TEXT,
+  option_value TEXT,
   sort_order INTEGER NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (entity_id) REFERENCES entities(id) ON DELETE CASCADE

@@ -55,7 +55,7 @@ class EntityService:
             flds = conn.execute(
                 text("""
                     SELECT id, name, label, type, required,
-                           depends_on, config, sort_order
+                           depends_on, options_api, option_label, option_value, sort_order
                     FROM entity_fields
                     WHERE LOWER(entity_id) = LOWER(:id)
                     ORDER BY sort_order
@@ -84,8 +84,14 @@ class EntityService:
         parsed_flds = []
         for f in flds:
             f = dict(f)
-            f["config"] = json.loads(f["config"] or "{}")
             f["required"] = EntityService._int_to_bool(f["required"])
+            # Map DB columns to API keys (camelCase)
+            if f.get("options_api") is not None:
+                f["optionsAPI"] = f.pop("options_api")
+            if f.get("option_label") is not None:
+                f["optionLabel"] = f.pop("option_label")
+            if f.get("option_value") is not None:
+                f["optionValue"] = f.pop("option_value")
             parsed_flds.append(f)
 
         parsed_acts = []
