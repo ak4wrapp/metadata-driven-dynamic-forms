@@ -29,14 +29,14 @@ export default function SchemaForm({
 
   const prevDepsRef = React.useRef<Record<string, any>>({});
 
-  // Flatten field configs with backend metadata
-  const flattenedFields = React.useMemo(
-    () => fields.map((f) => ({ ...f, ...f.config })),
-    [fields]
-  );
+  // // Flatten field configs with backend metadata
+  // const flattenedFields = React.useMemo(
+  //   () => fields.map((f) => ({ ...f, ...f.config })),
+  //   [fields]
+  // );
 
   React.useEffect(() => {
-    flattenedFields.forEach((field) => {
+    fields.forEach((field) => {
       if (field.type === "dynamic-select" && field.optionsAPI) {
         const dependsOnValue = field.dependsOn ? state[field.dependsOn] : true;
 
@@ -116,7 +116,7 @@ export default function SchemaForm({
       }}
     >
       <Stack spacing={2}>
-        {flattenedFields.map((f) => {
+        {fields.map((f) => {
           switch (f.type) {
             case "text":
             case "number":
@@ -166,6 +166,9 @@ export default function SchemaForm({
                   value={state[f.name] ?? ""}
                   onChange={(e) => handleChange(f.name, e.target.value)}
                 >
+                  <MenuItem value="" disabled hidden>
+                    Select...
+                  </MenuItem>
                   {f.options?.map((o) => (
                     <MenuItem key={o.value} value={o.value}>
                       {o.label}

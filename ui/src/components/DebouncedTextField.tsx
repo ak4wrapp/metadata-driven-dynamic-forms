@@ -47,5 +47,16 @@ export default function DebouncedTextField({
     };
   }, []);
 
-  return <TextField {...props} value={localValue} onChange={handleChange} />;
+  // If 'select' prop is true, always pass children (fallback to <option>Select...</option> if none provided)
+  return (
+    <TextField {...props} value={localValue} onChange={handleChange}>
+      {props.select
+        ? props.children ?? (
+            <option value="" disabled hidden>
+              Select...
+            </option>
+          )
+        : undefined}
+    </TextField>
+  );
 }

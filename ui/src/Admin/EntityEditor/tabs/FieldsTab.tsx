@@ -94,7 +94,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                   height={120}
                   helperText={`Static select options as [{ ${
                     f.optionLabel || "label"
-                  }, ${f.optionValue || "value"} }]`}
+                  }: label, ${f.optionValue || "value"}: value }, ...]`}
                 />
               )}
 
@@ -113,7 +113,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                 <>
                   <DebouncedTextField
                     label="Option Label"
-                    value={f.optionLabel || "label"}
+                    value={f.optionLabel}
                     onChange={(e) =>
                       updateField(i, {
                         optionLabel: e.target.value,
@@ -123,7 +123,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
                   />
                   <DebouncedTextField
                     label="Option Value"
-                    value={f.optionValue || "value"}
+                    value={f.optionValue}
                     onChange={(e) =>
                       updateField(i, {
                         optionValue: e.target.value,
