@@ -1,199 +1,131 @@
-# Demo 👍
-https://metadata-driven-dynamic-forms.vercel.app/
+# UI Guide: Metadata-Driven Dynamic Forms
 
-# 🎯 Goal
+## How the UI Works
 
-- **Simple entities** → generated from config
-- **Complex entities** → custom React form
-- Same `FormRenderer` API
-- Strong typing (TS)
-- React 19 compatible
+This UI is a dynamic, metadata-driven React app. All forms, grids, and actions are rendered based on metadata loaded from the backend. No hardcoded forms or columns—everything is driven by the entity definition.
 
 ---
 
-## 1️⃣ Define a Field Schema (Form Metadata)
+## 1. Entity Loading Flow
+
+### a. Route/Entry Point
+
+- The app uses React Router. When you navigate to an entity (e.g. `/entity/D`), the route parameter determines which entity to load.
+
+### b. Fetching Metadata
+
+- The UI fetches metadata for the entity from the backend API: `/api/entity/:id`.
+- This metadata includes:
+  - `fields`: Array of field definitions (see FieldConfig below)
+  - `columns`: Array of grid column definitions
+  - `actions`: Array of available actions (form, API, custom)
+  - `api`: The data endpoint for CRUD
+
+### c. Fetching Data
+
+- The UI uses the `api` property from the metadata to fetch the entity's data rows (for grids) or a single record (for forms).
+- All data fetching is handled via React Query for caching and reactivity.
+
+---
+
+## 2. Rendering: Grids and Forms
+
+### a. Grid Rendering
+
+- The grid (AG Grid) is rendered using the `columns` metadata.
+- Each column definition includes field, header, renderer, and options for custom cell rendering.
+- Data is fetched from the entity's `api` endpoint.
+
+### b. Form Rendering
+
+- The form is rendered using the `fields` metadata.
+- Each field is rendered according to its type (text, number, select, dynamic-select, etc.).
+- Dynamic selects fetch their options from the `optionsAPI` endpoint defined in the field.
+- Field dependencies (e.g. `dependsOn`) are handled to update options or visibility based on other field values.
+
+### c. Custom Forms
+
+- If the entity metadata specifies a custom form component, the UI loads and renders that React component instead of the auto-generated form.
+
+---
+
+## 3. FieldConfig Reference
 
 ```ts
-export type FieldType = "text" | "number" | "select" | "checkbox" | "date";
-
 export interface FieldConfig {
   name: string;
   label: string;
-  type: FieldType;
+  type: "text" | "number" | "select" | "checkbox" | "date" | "dynamic-select";
   required?: boolean;
   readOnly?: boolean;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string | number }[];
+  optionsAPI?: string;
+  optionLabel?: string;
+  optionValue?: string;
+  dependsOn?: string;
 }
 ```
 
 ---
 
-## 2️⃣ Entity Configuration (Grid + Form Together)
+## 4. Key Files & Components
 
-```ts
-export const entityConfig = {
-  A: {
-    api: '/api/a',
-    columns: [...],
-    form: {
-      type: 'schema',
-      fields: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'age', label: 'Age', type: 'number' },
-      ],
-    },
-  },
-
-  B: {
-    api: '/api/b',
-    columns: [...],
-    form: {
-      type: 'component',
-      component: FormB,
-    },
-  },
-} as const;
-```
-
-This is the **key decision point**.
+- `src/DynamicLanding.tsx`: Entry point for entity routes; loads metadata and data.
+- `src/DynamicForm.tsx`: Main form renderer; chooses between auto-generated and custom forms.
+- `src/SchemaForm.tsx`: Renders forms based on FieldConfig array.
+- `src/Admin/EntityEditor/EntityEditor.tsx`: Admin UI for editing entity metadata.
+- `src/queryClient.ts`: React Query setup for all data fetching.
+- `src/hooks/useAPI.ts`, `useEntityController.ts`: Custom hooks for API and entity logic.
+- `src/types.ts`: TypeScript types for all metadata.
 
 ---
 
-## 3️⃣ Auto-Generated Form (Schema Based)
+## 5. Data Flow: End-to-End
+
+1. User navigates to `/entity/:id`.
+2. `DynamicLanding.tsx` fetches entity metadata from `/api/entity/:id`.
+3. Metadata is passed to `DynamicForm` and grid components.
+4. `DynamicForm` renders either a schema-based form (`SchemaForm`) or a custom form component. (provided in the metadata)
+5. On form submit, data is posted to the entity's `api` endpoint.
+6. Grids fetch and display data from the same endpoint.
+
+---
+
+## 6. Extending & Customizing the UI
+
+- **Add new field types**: Update `FieldConfig` in `types.ts` and add a renderer in `schema-form/FieldRenderer.tsx`.
+- **Add new entities**: Add to backend metadata and reseed; UI will auto-load.
+- **Custom forms**: Register a new React component and reference it in the entity metadata.
+- **Custom cell renderers**: Add to `cell-renderers/` and reference in column metadata.
+
+---
+
+## 7. Developer Tips
+
+- All UI is metadata-driven—no hardcoded forms or columns.
+- Use React Query for all data fetching.
+- Use TypeScript for strong typing and safety.
+- Use the Admin UI to edit entity metadata live (if enabled).
+
+---
+
+## Example: Loading and Rendering an Entity
 
 ```tsx
-interface SchemaFormProps {
-  fields: FieldConfig[];
-  mode: "create" | "edit";
-  initialData?: Record<string, any>;
-  onSubmit: (data: any) => void;
-}
+// In DynamicLanding.tsx
+const { data: meta } = useEntityController(entityId);
+const { data: rows } = useAPI(meta?.api);
 
-export function SchemaForm({ fields, initialData, onSubmit }: SchemaFormProps) {
-  const [state, setState] = React.useState(() => initialData ?? {});
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit(state);
-      }}
-    >
-      {fields.map((f) => (
-        <div key={f.name}>
-          <label>{f.label}</label>
-
-          {f.type === "text" && (
-            <input
-              value={state[f.name] ?? ""}
-              onChange={(e) => setState({ ...state, [f.name]: e.target.value })}
-            />
-          )}
-
-          {f.type === "number" && (
-            <input
-              type="number"
-              value={state[f.name] ?? ""}
-              onChange={(e) =>
-                setState({ ...state, [f.name]: +e.target.value })
-              }
-            />
-          )}
-
-          {f.type === "select" && (
-            <select
-              value={state[f.name]}
-              onChange={(e) => setState({ ...state, [f.name]: e.target.value })}
-            >
-              {f.options?.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-      ))}
-
-      <button type="submit">Save</button>
-    </form>
-  );
-}
+return (
+  <>
+    <AGGrid columns={meta.columns} rows={rows} />
+    <DynamicForm fields={meta.fields} ... />
+  </>
+);
 ```
 
 ---
 
-## 4️⃣ Unified Form Renderer (Magic Happens Here)
+## License
 
-```tsx
-interface DynamicFormProps {
-  entityKey: keyof typeof entityConfig;
-  mode: "create" | "edit";
-  data?: any;
-  onSubmit: (payload: any) => Promise<void>;
-}
-
-export function DynamicForm({
-  entityKey,
-  mode,
-  data,
-  onSubmit,
-}: DynamicFormProps) {
-  const formConfig = entityConfig[entityKey].form;
-
-  if (formConfig.type === "component") {
-    const CustomForm = formConfig.component;
-    return <CustomForm mode={mode} initialData={data} onSubmit={onSubmit} />;
-  }
-
-  return (
-    <SchemaForm
-      fields={formConfig.fields}
-      mode={mode}
-      initialData={data}
-      onSubmit={onSubmit}
-    />
-  );
-}
-```
-
----
-
-## 5️⃣ Usage from Grid / Route (No Change)
-
-```tsx
-<DynamicForm
-  entityKey={routeKey}
-  mode={selectedRow ? "edit" : "create"}
-  data={selectedRow}
-  onSubmit={(payload) =>
-    selectedRow
-      ? updateEntity(routeKey, payload)
-      : createEntity(routeKey, payload)
-  }
-/>
-```
-
----
-
-## 6️⃣ Why This Is the Sweet Spot
-
-✅ One renderer
-✅ Metadata-first
-✅ Zero boilerplate for simple entities
-✅ Unlimited customization when needed
-✅ Easy to enforce permissions, defaults, read-only
-✅ Aligns with enterprise React patterns
-
----
-
-## 7️⃣ Next Logical Enhancements (Pick One)
-
-1. 🔐 **Permissions / role-based field visibility**
-2. 🧠 **Share grid column config → form config**
-3. ✅ **Zod validation from same schema**
-4. 🧩 **Form sections / tabs**
-5. 🚀 **Server-driven form config**
-6. ⚡ **React Hook Form version (performance)**
-
-Tell me which one you want next and I’ll build it on top of this exact structure.
+MIT
