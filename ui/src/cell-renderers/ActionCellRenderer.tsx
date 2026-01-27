@@ -3,10 +3,16 @@ import { ICellRendererParams } from "ag-grid-community";
 import { ActionConfig } from "../form-config";
 import { DynamicForm } from "../DynamicForm";
 import { ApiActionDialog } from "../dialogs/APIActionDialog";
-import { CustomDialog } from "../dialogs/CustomDialog";
+// import { CustomDialog } from "../dialogs/CustomDialog";
 import { ActionDialog } from "../dialogs/ActionDialog";
 import { ActionButton } from "../components/ActionButton";
 import { cellRendererRegistry } from "./cellRendererRegistry";
+
+const LazyCustomDialog = React.lazy(() =>
+  import("../dialogs/CustomDialog").then((module) => ({
+    default: module.CustomDialog,
+  }))
+);
 
 type Props = ICellRendererParams & {
   actions: ActionConfig[];
@@ -105,13 +111,13 @@ export const ActionsCellRenderer: React.FC<Props> = ({
         />
       ))}
 
-      <CustomDialog
+      <LazyCustomDialog
         open={dialogOpen}
         title={dialogTitle}
         onClose={() => setDialogOpen(false)}
       >
         {dialogContent || <div>Loading...</div>}
-      </CustomDialog>
+      </LazyCustomDialog>
     </>
   );
 };

@@ -39,6 +39,18 @@ function Navigation() {
   );
 }
 
+const LazyAdminEntities = React.lazy(() =>
+  import("./Admin/AdminEntities").then((module) => ({
+    default: module.AdminEntities,
+  }))
+);
+
+const LazyDynamicLanding = React.lazy(() =>
+  import("./DynamicLanding").then((module) => ({
+    default: module.DynamicLanding,
+  }))
+);
+
 export default function AppRoute() {
   return (
     <BrowserRouter>
@@ -47,11 +59,11 @@ export default function AppRoute() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/dynamic-landing" replace />} />
-        <Route path="/dynamic-landing" element={<DynamicLanding />} />
-        <Route path="/admin" element={<AdminEntities />} />
+        <Route path="/dynamic-landing" element={<LazyDynamicLanding />} />
+        <Route path="/admin" element={<LazyAdminEntities />} />
 
         {/* Optional fallback */}
-        <Route path="*" element={<DynamicLanding />} />
+        <Route path="*" element={<Navigate to="/dynamic-landing" replace />} />
       </Routes>
     </BrowserRouter>
   );

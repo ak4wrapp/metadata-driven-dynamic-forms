@@ -15,8 +15,8 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { JsonEditor } from "../../../components/JsonEditor";
 import DebouncedTextField from "../../../components/DebouncedTextField";
+import { LazyJsonEditor } from "./LazyImports";
 
 const fieldTypes = [
   "text",
@@ -87,7 +87,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               </FormControl>
 
               {f.type === "select" && (
-                <JsonEditor
+                <LazyJsonEditor
                   label="Options (JSON)"
                   value={f.options}
                   onChange={(val) => updateField(i, { options: val })}

@@ -9,10 +9,19 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { AgGridReact } from "ag-grid-react";
-import { EntityEditor } from "./EntityEditor/EntityEditor";
 import { useAPI } from "../hooks/useAPI";
 
+const LazyEntityEditor = React.lazy(() =>
+  import("./EntityEditor/EntityEditor").then((module) => ({
+    default: module.EntityEditor,
+  }))
+);
+import { ColDef } from "ag-grid-community";
+const LazyAgGridReact = React.lazy(() =>
+  import("ag-grid-react").then((module) => ({
+    default: module.AgGridReact,
+  }))
+);
 export function AdminEntities() {
   const [open, setOpen] = React.useState(false);
   const [mode, setMode] = React.useState<"create" | "edit">("create");
@@ -37,12 +46,13 @@ export function AdminEntities() {
     callAPI(); // reload list
   };
 
-  const columnDefs = [
+  const columnDefs: ColDef[] = [
     { field: "title", flex: 1 },
     { field: "api", flex: 1 },
     { field: "formType", width: 120 },
     {
       headerName: "Actions",
+      field: "actions",
       width: 120,
       cellRenderer: (p: any) => (
         <Button
@@ -88,7 +98,7 @@ export function AdminEntities() {
       </Button>
 
       <Box height={500}>
-        <AgGridReact rowData={data ?? []} columnDefs={columnDefs} />
+        <LazyAgGridReact rowData={data ?? []} columnDefs={columnDefs} />
       </Box>
 
       {/* ---------- MUI Dialog ---------- */}
@@ -104,7 +114,7 @@ export function AdminEntities() {
         </DialogTitle>
 
         <DialogContent dividers>
-          {entity && <EntityEditor entity={entity} onSave={saveEntity} />}
+          {entity && <LazyEntityEditor entity={entity} onSave={saveEntity} />}
         </DialogContent>
 
         <DialogActions>

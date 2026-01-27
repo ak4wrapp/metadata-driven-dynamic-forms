@@ -145,3 +145,5 @@ export function JsonEditor({
     </Box>
   );
 }
+
+export default JsonEditor;

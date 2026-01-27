@@ -1,12 +1,27 @@
-import { AgGridReact } from "ag-grid-react";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { CustomDialog } from "./dialogs/CustomDialog";
-import { DynamicForm } from "./DynamicForm";
+// import { CustomDialog } from "./dialogs/CustomDialog";
+// import { DynamicForm } from "./DynamicForm";
 import { buildColumnDefs } from "./utils/buildColumnDefs";
 import { useEntityController } from "./hooks/useEntityController";
 import { useState, useMemo } from "react";
 import { ComponentFormDefinition, SchemaFormDefinition } from "./form-config";
+import React from "react";
 
+const LazyAgGridReact = React.lazy(() =>
+  import("ag-grid-react").then((module) => ({
+    default: module.AgGridReact,
+  }))
+);
+const LazyCustomDialog = React.lazy(() =>
+  import("./dialogs/CustomDialog").then((module) => ({
+    default: module.CustomDialog,
+  }))
+);
+const LazyDynamicForm = React.lazy(() =>
+  import("./DynamicForm").then((module) => ({
+    default: module.DynamicForm,
+  }))
+);
 export function DynamicLanding() {
   const {
     entities,
@@ -27,7 +42,7 @@ export function DynamicLanding() {
     return buildColumnDefs(
       activeEntity.columns,
       activeEntity.actions ?? [],
-      (action, row) => console.log("Action triggered", action, row),
+      (action, row) => console.log("Action triggered", action, row)
     );
   }, [columnsReady, activeEntity]);
 
@@ -47,7 +62,7 @@ export function DynamicLanding() {
       activeEntity.fields.reduce((acc, f) => {
         acc[f.name] = "";
         return acc;
-      }, {} as any),
+      }, {} as any)
     );
     setDialogMode("create");
     setCrudDialogOpen(true);
@@ -118,7 +133,7 @@ export function DynamicLanding() {
       </Box>
 
       <Box sx={{ height: 500, width: "100%" }}>
-        <AgGridReact
+        <LazyAgGridReact
           rowData={activeEntity.rows ?? []}
           columnDefs={columnDefs}
           rowSelection="single"
@@ -127,13 +142,13 @@ export function DynamicLanding() {
         />
       </Box>
 
-      <CustomDialog
+      <LazyCustomDialog
         open={crudDialogOpen}
         title={dialogMode === "create" ? "Add New" : "Edit Item"}
         onClose={() => setCrudDialogOpen(false)}
       >
         {dialogData && (
-          <DynamicForm
+          <LazyDynamicForm
             form={
               activeEntity.formType === "component"
                 ? (activeEntity as ComponentFormDefinition)
@@ -144,7 +159,7 @@ export function DynamicLanding() {
             onSubmit={handleSubmit}
           />
         )}
-      </CustomDialog>
+      </LazyCustomDialog>
     </Box>
   );
 }
