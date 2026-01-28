@@ -26,6 +26,7 @@ export default function SchemaForm({
 }: SchemaFormProps) {
   const [state, setState] = React.useState(() => initialData ?? {});
   const [dynamicOptions, setDynamicOptions] = React.useState<OptionsMap>({});
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const prevDepsRef = React.useRef<Record<string, any>>({});
 
@@ -103,6 +104,47 @@ export default function SchemaForm({
     });
   };
 
+  function validate() {
+    const next: Record<string, string> = {};
+
+    fields.forEach((field) => {
+      let isEffectivelyRequired = !!field.required;
+
+      if (!isEffectivelyRequired && (field as any).requiredIf) {
+        const reqIf = (field as any).requiredIf;
+        const otherVal = state[reqIf.field];
+
+        // operator-based: 'present' means other field is provided/not-empty
+        if (reqIf.operator === "present") {
+          const otherEmpty =
+            otherVal === undefined ||
+            otherVal === null ||
+            (typeof otherVal === "string" && otherVal.trim() === "") ||
+            (Array.isArray(otherVal) && otherVal.length === 0);
+          if (!otherEmpty) isEffectivelyRequired = true;
+        } else if (reqIf.operator === "equals" || reqIf.operator === undefined) {
+          if (String(otherVal) === String(reqIf.value)) {
+            isEffectivelyRequired = true;
+          }
+        }
+      }
+
+      if (!isEffectivelyRequired) return;
+
+      const value = state[field.name];
+      const isEmpty =
+        value === undefined ||
+        value === null ||
+        (typeof value === "string" && value.trim() === "") ||
+        (Array.isArray(value) && value.length === 0);
+
+      if (isEmpty) next[field.name] = `${field.label} is required`;
+    });
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
+
   // Replace {field} placeholders in API URL template
   function resolveAPI(apiTemplate: string, state: Record<string, any>) {
     return apiTemplate.replace(/\{(\w+)\}/g, (_, key) => state[key] ?? "");
@@ -112,6 +154,7 @@ export default function SchemaForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        if (!validate()) return;
         onSubmit(state);
       }}
     >
@@ -127,7 +170,9 @@ export default function SchemaForm({
                   variant="standard"
                   type={f.type}
                   value={state[f.name] ?? (f.type === "number" ? 0 : "")}
-                  required={f.required}
+                  required={!!f.required}
+                  error={!!errors[f.name]}
+                  helperText={errors[f.name]}
                   onChange={(e) =>
                     setState({
                       ...state,
@@ -153,7 +198,16 @@ export default function SchemaForm({
                       disabled={f.readOnly}
                     />
                   }
-                  label={f.label}
+                  label={
+                    <>
+                      {f.label}
+                      {errors[f.name] && (
+                        <span style={{ color: "#d32f2f", marginLeft: 8 }}>
+                          {errors[f.name]}
+                        </span>
+                      )}
+                    </>
+                  }
                 />
               );
 
@@ -165,6 +219,8 @@ export default function SchemaForm({
                   label={f.label}
                   value={state[f.name] ?? ""}
                   onChange={(e) => handleChange(f.name, e.target.value)}
+                  error={!!errors[f.name]}
+                  helperText={errors[f.name]}
                 >
                   <MenuItem value="" disabled hidden>
                     Select...
@@ -192,6 +248,8 @@ export default function SchemaForm({
                   label={f.label}
                   value={hasOptions ? state[f.name] ?? "" : ""}
                   onChange={(e) => handleChange(f.name, e.target.value)}
+                  error={!!errors[f.name]}
+                  helperText={errors[f.name]}
                 >
                   {isLoading && (
                     <MenuItem disabled>
@@ -220,6 +278,8 @@ export default function SchemaForm({
                   onChange={(e) =>
                     setState({ ...state, [f.name]: e.target.value })
                   }
+                  error={!!errors[f.name]}
+                  helperText={errors[f.name]}
                 />
               );
 

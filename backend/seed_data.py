@@ -79,8 +79,8 @@ def seed(reset: bool = False):
                 conn.execute(
                     text("""
                         INSERT INTO entity_fields
-                        (entity_id, name, label, type, required, depends_on, options_api, option_label, option_value, sort_order)
-                        VALUES (:eid, :n, :l, :t, :req, :dep, :options_api, :option_label, :option_value, :o)
+                        (entity_id, name, label, type, required, config, depends_on, options_api, option_label, option_value, sort_order)
+                        VALUES (:eid, :n, :l, :t, :req, :config, :dep, :options_api, :option_label, :option_value, :o)
                     """),
                     {
                         "eid": entity["id"],
@@ -88,6 +88,7 @@ def seed(reset: bool = False):
                         "l": field["label"],
                         "t": field["type"],
                         "req": field.get("required", False),
+                        "config": json.dumps(field.get("config")) if field.get("config") else None,
                         "dep": field.get("dependsOn"),
                         "options_api": field.get("optionsAPI"),
                         "option_label": field.get("optionLabel"),

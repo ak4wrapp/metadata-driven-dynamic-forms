@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS entity_fields (
   label TEXT NOT NULL,
   type TEXT NOT NULL,
   required BOOLEAN DEFAULT 0,
+  -- Arbitrary JSON configuration for future rules (e.g. requiredIf)
+  config TEXT,
   depends_on TEXT,
   options_api TEXT,
   option_label TEXT,

@@ -21,6 +21,13 @@ export interface FieldConfig {
   label: string;
   type: FieldType;
   required?: boolean;
+  // Make this field required when another field matches a condition.
+  // operator: 'equals' compares values; 'present' means the other field is provided/non-empty.
+  requiredIf?: {
+    field: string;
+    value?: string | number | boolean;
+    operator?: "equals" | "present";
+  };
   readOnly?: boolean;
   options?: { label: string; value: string | number }[];
   optionsAPI?: string;

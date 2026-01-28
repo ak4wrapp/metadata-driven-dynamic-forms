@@ -54,7 +54,7 @@ class EntityService:
             # fields
             flds = conn.execute(
                 text("""
-                    SELECT id, name, label, type, required,
+                    SELECT id, name, label, type, required, config,
                            depends_on, options_api, option_label, option_value, sort_order
                     FROM entity_fields
                     WHERE LOWER(entity_id) = LOWER(:id)
@@ -92,6 +92,21 @@ class EntityService:
                 f["optionLabel"] = f.pop("option_label")
             if f.get("option_value") is not None:
                 f["optionValue"] = f.pop("option_value")
+
+            # Parse and merge JSON config if present, normalize legacy token
+            try:
+                cfg = json.loads(f.get("config") or "{}")
+            except Exception:
+                cfg = {}
+
+            # No legacy token handling; expecting `requiredIf.operator` (equals|present)
+
+            # Merge config keys to top-level (e.g., requiredIf)
+            f.update(cfg)
+            # Remove raw config key (already merged)
+            if "config" in f:
+                del f["config"]
+
             parsed_flds.append(f)
 
         parsed_acts = []
@@ -236,6 +251,14 @@ class EntityService:
 
             # --- reinsert fields ---
             for f in data.get("fields", []):
+                # Build config JSON: prefer explicit `config` key, but also
+                # accept top-level keys (e.g., `requiredIf`) from UI and merge them.
+                cfg = f.get("config") or {}
+                # If UI sent known rule keys at top-level, merge them into cfg
+                if f.get("requiredIf") is not None and "requiredIf" not in cfg:
+                    cfg = dict(cfg)
+                    cfg["requiredIf"] = f.get("requiredIf")
+
                 conn.execute(
                     text("""
                         INSERT INTO entity_fields (
@@ -255,9 +278,7 @@ class EntityService:
                         "type": f.get("type"),
                         "required": int(bool(f.get("required"))),
                         "depends_on": f.get("depends_on") or f.get("dependsOn"),
-                        "config": json.dumps(
-                            f.get("config", {})
-                        ),
+                        "config": json.dumps(cfg or {}),
                         "sort_order": f.get("sort_order", f.get("sortOrder", 0)),
                     },
                 )

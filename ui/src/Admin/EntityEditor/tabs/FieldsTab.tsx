@@ -149,6 +149,88 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
               <FormControlLabel
                 control={
                   <Switch
+                    // Switch is ON when a requiredIf object exists
+                    checked={!!f.requiredIf}
+                    onChange={(e) =>
+                      updateField(i, {
+                        requiredIf: e.target.checked
+                          ? { field: "", operator: "equals", value: "" }
+                          : undefined,
+                      })
+                    }
+                  />
+                }
+                label="Conditionally required"
+              />
+
+              {f.requiredIf && (
+                <>
+                  <FormControl size="small" sx={{ minWidth: 160 }}>
+                    <InputLabel>When field</InputLabel>
+                    <Select
+                      value={f.requiredIf.field || ""}
+                      label="When field"
+                      onChange={(e) =>
+                        updateField(i, {
+                          requiredIf: { ...(f.requiredIf || {}), field: e.target.value },
+                        })
+                      }
+                    >
+                      {fields
+                        .filter((other) => other.name !== f.name && other.name)
+                        .map((other) => (
+                          <MenuItem key={other.name} value={other.name}>
+                            {other.label || other.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl size="small" sx={{ minWidth: 160 }}>
+                    <InputLabel>Operator</InputLabel>
+                    <Select
+                      value={f.requiredIf.operator || "equals"}
+                      label="Operator"
+                      onChange={(e) =>
+                        updateField(i, {
+                          requiredIf: { ...(f.requiredIf || {}), operator: e.target.value },
+                        })
+                      }
+                    >
+                      <MenuItem value="equals">Is equal to</MenuItem>
+                      <MenuItem value="present">Is provided / Not empty</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  {(!f.requiredIf.operator || f.requiredIf.operator === "equals") && (
+                    <DebouncedTextField
+                      label="Equals value"
+                      value={f.requiredIf.value ?? ""}
+                      onChange={(e) =>
+                        updateField(i, {
+                          requiredIf: { ...(f.requiredIf || {}), value: e.target.value },
+                        })
+                      }
+                      size="small"
+                      // Show inline validation if operator is equals and value is empty
+                      error={
+                        (f.requiredIf?.operator || "equals") === "equals" &&
+                        (f.requiredIf?.value ?? "") === ""
+                      }
+                      helperText={
+                        (f.requiredIf?.operator || "equals") === "equals" &&
+                        (f.requiredIf?.value ?? "") === ""
+                          ? "Value is required for 'Is equal to' operator"
+                          : undefined
+                      }
+                    />
+                  )}
+                </>
+              )}
+
+              <FormControlLabel
+                control={
+                  <Switch
                     checked={!!f.readOnly}
                     onChange={(e) =>
                       updateField(i, { readOnly: e.target.checked })
@@ -174,6 +256,7 @@ export function FieldsTab({ fields, update, add, remove }: FieldsTabProps) {
             label: "",
             type: "text",
             required: false,
+            requiredIf: undefined,
             readOnly: false,
           })
         }
