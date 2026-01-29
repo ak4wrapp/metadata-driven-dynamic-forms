@@ -13,15 +13,15 @@ export default defineConfig({
             if (id.includes("ag-grid")) {
               return "vendor-ag-grid";
             }
-            if (
-              id.includes("react-router") ||
-              id.includes("react-router-dom")
-            ) {
-              return "vendor-react-router";
-            }
-            if (id.includes("react") || id.includes("react-dom")) {
-              return "vendor-react";
-            }
+            // if (
+            //   id.includes("react-router") ||
+            //   id.includes("react-router-dom")
+            // ) {
+            //   return "vendor-react-router";
+            // }
+            // if (id.includes("react")) {
+            //   return "vendor-react";
+            // }
             if (id.includes("mui") || id.includes("material-ui")) {
               return "vendor-mui";
             }
