@@ -10,17 +10,17 @@ import React from "react";
 const LazyAgGridReact = React.lazy(() =>
   import("ag-grid-react").then((module) => ({
     default: module.AgGridReact,
-  }))
+  })),
 );
 const LazyCustomDialog = React.lazy(() =>
   import("./dialogs/CustomDialog").then((module) => ({
     default: module.CustomDialog,
-  }))
+  })),
 );
 const LazyDynamicForm = React.lazy(() =>
   import("./DynamicForm").then((module) => ({
     default: module.DynamicForm,
-  }))
+  })),
 );
 export function DynamicLanding() {
   const {
@@ -42,7 +42,7 @@ export function DynamicLanding() {
     return buildColumnDefs(
       activeEntity.columns,
       activeEntity.actions ?? [],
-      (action, row) => console.log("Action triggered", action, row)
+      (action, row) => console.log("Action triggered", action, row),
     );
   }, [columnsReady, activeEntity]);
 
@@ -62,7 +62,7 @@ export function DynamicLanding() {
       activeEntity.fields.reduce((acc, f) => {
         acc[f.name] = "";
         return acc;
-      }, {} as any)
+      }, {} as any),
     );
     setDialogMode("create");
     setCrudDialogOpen(true);
@@ -136,8 +136,12 @@ export function DynamicLanding() {
         <LazyAgGridReact
           rowData={activeEntity.rows ?? []}
           columnDefs={columnDefs}
-          rowSelection="single"
-          animateRows
+          gridOptions={{
+            rowSelection: {
+              mode: "singleRow",
+            },
+          }}
+          animateRows={true}
           onRowDoubleClicked={(e) => handleRowDoubleClick(e.data)}
         />
       </Box>
