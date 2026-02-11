@@ -6,6 +6,16 @@ import { visualizer } from "rollup-plugin-visualizer";
 export default defineConfig({
   plugins: [react(), visualizer({ open: true })],
   build: {
+    target: "esnext",
+    // Use "terser" for advanced minification options
+    minify: "terser",
+    // Drop console and debugger in production
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {
